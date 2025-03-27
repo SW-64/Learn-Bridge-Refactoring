@@ -1,0 +1,159 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+    provider        = "prisma-client-js"
+    previewFeatures = ["omitApi"]
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id        Int      @id @default(autoincrement())
+    name      String
+    role      UserRole
+    email     String   @unique
+    password  String
+    photo     String
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+    teacher   Teacher?
+    student   Student?
+
+    @@map("users")
+}
+
+model Teacher {
+    teacherId Int      @id @default(autoincrement()) @map("teacher_id")
+    userId    Int      @unique @map("user_id")
+    subject   String
+    createdAt DateTime @default(now()) @map("created_at")
+
+    user         User           @relation(fields: [userId], references: [id])
+    Consultation Consultation[]
+    Feedback     Feedback[]
+
+    @@map("teachers")
+}
+
+model Student {
+    studentId Int      @id @default(autoincrement()) @map("student_id")
+    userId    Int      @unique @map("user_id")
+    grade     Int
+    class     Int
+    number    Int
+    createdAt DateTime @default(now()) @map("created_at")
+
+    user          User            @relation(fields: [userId], references: [id])
+    Parents       Parents?
+    StudentRecord StudentRecord[]
+    Grade         Grade[]
+    Consultation  Consultation[]
+    Feedback      Feedback[]
+
+    @@map("students")
+}
+
+model Parents {
+    parentsId Int      @id @default(autoincrement()) @map("parent_id")
+    studentId Int      @unique @map("student_id")
+    createdAt DateTime @default(now()) @map("created_at")
+
+    student Student @relation(fields: [studentId], references: [studentId])
+
+    @@map("parents")
+}
+
+model StudentRecord {
+    studentRecordId Int            @id @default(autoincrement()) @map("student_record_id")
+    studentId       Int            @map("student_id")
+    grade           Int
+    semester        Int
+    extraInfo       String?
+    attendanceType  AttendanceType
+    reason          Reason?
+    date            DateTime
+    createdAt       DateTime       @default(now()) @map("created_at")
+    updatedAt       DateTime       @updatedAt @map("updated_at")
+
+    student Student @relation(fields: [studentId], references: [studentId])
+}
+
+model Grade {
+    gradeId    Int      @id @default(autoincrement()) @map("grade_id")
+    studentId  Int      @map("student_id")
+    schoolYear Int
+    semester   Int
+    subject    String
+    score      Int
+    createdAt  DateTime @default(now()) @map("created_at")
+    updatedAt  DateTime @updatedAt @map("updated_at")
+
+    student Student @relation(fields: [studentId], references: [studentId])
+
+    @@map("exam")
+}
+
+model Consultation {
+    consultationId Int      @id @default(autoincrement()) @map("consultation_id")
+    studentId      Int      @map("student_id")
+    teacherId      Int      @map("teacher_id")
+    date           DateTime
+    content        String
+    nextPlan       DateTime
+    title          String
+    subject        String
+    createdAt      DateTime @default(now()) @map("created_at")
+    updatedAt      DateTime @updatedAt @map("updated_at")
+
+    student Student @relation(fields: [studentId], references: [studentId])
+    teacher Teacher @relation(fields: [teacherId], references: [teacherId])
+}
+
+model Feedback {
+    feedbackId Int      @id @default(autoincrement()) @map("feedback_id")
+    studentId  Int      @map("student_id")
+    teacherId  Int      @map("teacher_id")
+    date       DateTime
+    category   Category
+    content    String
+    title      String   @map("title")
+    createdAt  DateTime @default(now()) @map("created_at")
+    updatedAt  DateTime @updatedAt @map("updated_at")
+
+    student Student @relation(fields: [studentId], references: [studentId])
+    teacher Teacher @relation(fields: [teacherId], references: [teacherId])
+
+    @@map("feedback")
+}
+
+enum UserRole {
+    TEACHER
+    STUDENT
+}
+
+enum AttendanceType {
+    ATTENDANCE
+    LATE
+    ABSENT
+    LEAVE_EARLY
+}
+
+enum Reason {
+    SICK_LEAVE
+    UNEXCUSED_ABSENCE
+    OTEHR_REASONS
+}
+
+enum Category {
+    Grade
+    BEHAVIOR
+    ATTENDANCE
+    ATTITUDE
+}
