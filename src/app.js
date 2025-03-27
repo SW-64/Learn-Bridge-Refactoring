@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
 import { globalErrorHandler } from './middlewares/error-handler.middleware.js';
+import { apiRouter } from './routers/index.js';
 
 const app = express();
 const port = process.env.SERVER_PORT;
@@ -18,6 +19,7 @@ app.use(
 // 미들웨어
 app.use(express.json()); // req.body-> JSON 변환을 위해 사용
 app.use(express.urlencoded({ extended: true })); // 클라이언트가 보낸 데이터 -> req.body로 변환
+app.use(apiRouter);
 app.use(globalErrorHandler); // 미들웨어 중, 에러처리 미들웨어는 가장 마지막에
 
 // Test Routing
