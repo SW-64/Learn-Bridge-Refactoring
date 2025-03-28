@@ -1,5 +1,6 @@
 import AuthService from '../services/auth.service.js';
 import { HTTP_STATUS } from '../constants/http-status.constant.js';
+import { MESSAGES } from '../constants/message.constant.js';
 
 class AuthController {
   authService = new AuthService();
@@ -35,8 +36,7 @@ class AuthController {
 
       return res.status(HTTP_STATUS.CREATED).json({
         status: HTTP_STATUS.CREATED,
-        message: 'MESSAGES.AUTH.SIGN_UP.SUCCEED',
-        data,
+        message: MESSAGES.AUTH.SIGN_UP.SUCCEED,
       });
     } catch (error) {
       next(error);
@@ -52,7 +52,7 @@ class AuthController {
 
       return res.status(HTTP_STATUS.OK).json({
         status: HTTP_STATUS.OK,
-        message: 'MESSAGES.AUTH.SIGN_IN.SUCCEED',
+        message: MESSAGES.AUTH.SIGN_IN.SUCCEED,
         data,
       });
     } catch (error) {
@@ -68,7 +68,7 @@ class AuthController {
 
       return res.status(HTTP_STATUS.OK).json({
         status: HTTP_STATUS.OK,
-        message: 'MESSAGES.AUTH.SIGN_OUT.SUCCEED',
+        message: MESSAGES.AUTH.SIGN_OUT.SUCCEED,
         data: { id: user.id },
       });
     } catch (error) {
@@ -84,7 +84,7 @@ class AuthController {
 
       return res.status(HTTP_STATUS.OK).json({
         status: HTTP_STATUS.OK,
-        message: 'MESSAGES.AUTH.TOKEN.SUCCEED',
+        message: MESSAGES.AUTH.TOKEN.SUCCEED,
         data,
       });
     } catch (error) {

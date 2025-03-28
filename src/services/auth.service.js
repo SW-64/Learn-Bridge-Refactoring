@@ -11,6 +11,7 @@ import {
   ACCESS_TOKEN_SECRET,
   REFRESH_TOKEN_SECRET,
 } from '../constants/env.constant.js';
+import { MESSAGES } from '../constants/message.constant.js';
 
 class AuthService {
   authRepository = new AuthRepository();
@@ -30,24 +31,24 @@ class AuthService {
     // 이메일이 이미 존재한다면 에러 반환
     const existedUser = await this.authRepository.findUserByEmail(email);
     if (existedUser) {
-      throw new ConflictError('MESSAGES.AUTH.COMMON.EMAIL.DUPLICATED');
+      throw new ConflictError(MESSAGES.AUTH.COMMON.EMAIL.DUPLICATED);
     }
 
     // 비밀번호와 비밀번호 확인이 맞지않다면 에러 반환
     if (password !== passwordCheck) {
       throw new ConflictError(
-        'MESSAGES.AUTH.COMMON.PASSWORD_CHECK.NOT_MATCHTED_WITH_PASSWORD',
+        MESSAGES.AUTH.COMMON.PASSWORD_CHECK.NOT_MATCHTED_WITH_PASSWORD,
       );
     }
 
     // 학생이 과목을 작성할려는 경우 에러발생
     if (role == 'STUDENT' && subject) {
-      throw new BadRequestError('MESSAGES.AUTH.SIGN_UP.STUDENT_INVALID');
+      throw new BadRequestError(MESSAGES.AUTH.SIGN_UP.STUDENT_INVALID);
     }
 
     // 선생님이 학년, 반, 출석번호를 작성하려는 경우 에러발생
     if (role == 'TEACHER' && (grade || number || gradeClass)) {
-      throw new BadRequestError('MESSAGES.AUTH.SIGN_UP.STUDENT_INVALID');
+      throw new BadRequestError(MESSAGES.AUTH.SIGN_UP.TEACHER_INVALID);
     }
 
     const data = await this.authRepository.create({
@@ -71,7 +72,7 @@ class AuthService {
     const passwordCheck = user && bcrypt.compareSync(password, user.password);
 
     if (!passwordCheck) {
-      throw new UnauthorizedError('MESSAGES.AUTH.COMMON.UNAUTHORIZED');
+      throw new UnauthorizedError(MESSAGES.AUTH.COMMON.UNAUTHORIZED);
     }
 
     const payload = { id: user.id, role: user.role };
