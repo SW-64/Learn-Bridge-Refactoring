@@ -25,7 +25,8 @@ model User {
     updatedAt DateTime @updatedAt @map("updated_at")
     teacher   Teacher?
     student   Student?
-
+    RefreshToken RefreshToken?
+    
     @@map("users")
 }
 
@@ -131,6 +132,18 @@ model Feedback {
     teacher Teacher @relation(fields: [teacherId], references: [teacherId])
 
     @@map("feedback")
+}
+
+
+model RefreshToken {
+    refreshTokenId Int      @id @default(autoincrement()) @map("refresh_token_id")
+    userId         Int      @unique @map("user_id")
+    refreshToken   String?  @map("refresh_token")
+    createdAt      DateTime @default(now()) @map("created_at")
+    updatedAt      DateTime @updatedAt @map("updated_at")
+    user           User     @relation(fields: [userId], references: [id])
+
+    @@map("refresh_tokens")
 }
 
 enum UserRole {
