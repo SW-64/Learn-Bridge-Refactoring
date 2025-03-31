@@ -16,10 +16,10 @@ studentsRouter.get('/',requireAccessToken('TEACHER'), studentsController.checkSt
 //특정 학생 상세 조회
 studentsRouter.get('/:studentId',studentsController.checkStudent)
 
-// //특정 학생 정보 수정
-// studentsRouter.patch('/:studentId',studentsController.updateStudent);
+//특정 학생 정보 수정
+studentsRouter.patch('/:studentId',studentsController.updateStudent);
 
-// //특정 학생 정보 삭제
-// studentsRouter.delete('/:studentId',studentsController.deleteStudent);
+//특정 학생 정보 삭제
+studentsRouter.delete('/:studentId',studentsController.deleteStudent);
 
 export { studentsRouter };
