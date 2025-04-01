@@ -22,20 +22,26 @@ class StudentsService {
   
   //특정 학생 정보 수정
   updateOneStudent = async(studentId, updateData) => {
-    const student = await this.studentsRepository.getOneStudent(studentId); //유효성 검사 추가가
+
+    //유효성 검사 추가
+    const student = await this.studentsRepository.getOneStudent(studentId); 
     if(!student) {
       throw new NotFoundError(MESSAGES.STUDENT.COMMON.NOT_FOUND)
     }
+
     const data = await this.studentsRepository.updateOneStudent(studentId, updateData);
     return data;
   };
 
   //특정 학생 정보 삭제
   deleteOneStudent = async(studentId) => {
+
+    //유효성 검사 추가
     const student = await this.studentsRepository.getOneStudent(studentId);
     if(!student) {
       throw new NotFoundError(MESSAGES.STUDENT.COMMON.NOT_FOUND)
     }
+
     const data = await this.studentsRepository.deleteOneStudent(studentId);
     return data;
   }
