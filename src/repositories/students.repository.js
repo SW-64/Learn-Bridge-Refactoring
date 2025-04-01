@@ -12,7 +12,7 @@ class StudentsRepository {
     };
 
     //특정 학생 상세 조회
-    findStudent = async(studentId) => {
+    getOneStudent = async(studentId) => {
         const student = await prisma.student.findUnique({
             where: {
                 studentId: studentId,
@@ -26,7 +26,7 @@ class StudentsRepository {
     };
 
     //특정 학생 정보 수정
-    modifyStudent = async(studentId,updateData) => {
+    updateOneStudent = async(studentId,updateData) => {
         const student = await prisma.student.update({
             where: {
                 studentId: studentId,
@@ -42,7 +42,7 @@ class StudentsRepository {
     };
 
     //특정 학생 정보 삭제
-    eraseStudent= async(studentId) => {
+    deleteOneStudent= async(studentId) => {
         const student = await prisma.student.delete({
             where:{
                 studentId: studentId
