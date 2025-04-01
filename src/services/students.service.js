@@ -1,14 +1,49 @@
+import { MESSAGES } from '../constants/message.constant.js';
+import { NotFoundError } from '../errors/http.error.js';
 import StudentsRepository from '../repositories/students.repository.js';
 
 class StudentsService {
   studentsRepository = new StudentsRepository();
 
   //전체 학생 목록 조회
-  checkStudentList= async(userId) => {
-
-    const data = await this.studentsRepository.findAllStudents(userId);
+  getAllStudent= async(userId) => {
+    const data = await this.studentsRepository.getAllStudent(userId);
     return data;
   };
+
+  //특정 학생 상세 조회 , 유효성 검사
+  getOneStudent = async(studentId) => {
+    const student = await this.studentsRepository.getOneStudent(studentId);
+    if(!student) {
+      throw new NotFoundError(MESSAGES.STUDENT.COMMON.NOT_FOUND)
+    }
+    return student;
+  };
   
+  //특정 학생 정보 수정
+  updateOneStudent = async(studentId, updateData) => {
+
+    //유효성 검사 추가
+    const student = await this.studentsRepository.getOneStudent(studentId); 
+    if(!student) {
+      throw new NotFoundError(MESSAGES.STUDENT.COMMON.NOT_FOUND)
+    }
+
+    const data = await this.studentsRepository.updateOneStudent(studentId, updateData);
+    return data;
+  };
+
+  //특정 학생 정보 삭제
+  deleteOneStudent = async(studentId) => {
+
+    //유효성 검사 추가
+    const student = await this.studentsRepository.getOneStudent(studentId);
+    if(!student) {
+      throw new NotFoundError(MESSAGES.STUDENT.COMMON.NOT_FOUND)
+    }
+
+    const data = await this.studentsRepository.deleteOneStudent(studentId);
+    return data;
+  }
 };
 export default StudentsService;
