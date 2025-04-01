@@ -2,7 +2,7 @@ import { prisma } from "../utils/prisma.utils.js";
 
 class StudentsRepository {
     //전체 학생 목록 조회
-    findAllStudents = async(userId) =>{
+    getAllStudent = async() =>{
         const students = await prisma.student.findMany({
             include: {
                 user: true,
@@ -13,23 +13,23 @@ class StudentsRepository {
 
     //특정 학생 상세 조회
     findStudent = async(studentId) => {
-        const students = await prisma.student.findUnique({
+        const student = await prisma.student.findUnique({
             where: {
-                studentId:Number(studentId),
+                studentId: studentId,
             },
 
             include: {
                 user: true,
             },
         });
-        return students;
+        return student;
     };
 
     //특정 학생 정보 수정
     modifyStudent = async(studentId,updateData) => {
-        const students = await prisma.student.update({
+        const student = await prisma.student.update({
             where: {
-                studentId:Number(studentId),
+                studentId: studentId,
             },
 
             data: updateData,
@@ -38,17 +38,17 @@ class StudentsRepository {
                 user: true,
             },
         });
-        return students;
+        return student;
     };
 
     //특정 학생 정보 삭제
     eraseStudent= async(studentId) => {
-        const students = await prisma.student.delete({
+        const student = await prisma.student.delete({
             where:{
-                studentId:Number(studentId)
+                studentId: studentId
             },
         });
-        return students;
+        return student;
     };
 
 }
