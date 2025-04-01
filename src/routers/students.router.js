@@ -14,16 +14,16 @@ const studentsController = new StudentsController(studentsService);
 studentsRouter.get(
   '/',
   requireAccessToken('TEACHER'),
-  studentsController.checkStudentList,
+  studentsController.getAllStudent,
 );
 
 //특정 학생 상세 조회
-//studentsRouter.get('/:studentId',studentsController.checkStudent)
+studentsRouter.get('/:studentId', studentsController.getOneStudent);
 
-// //특정 학생 정보 수정
-// studentsRouter.patch('/:studentId',studentsController.updateStudent);
+//특정 학생 정보 수정
+studentsRouter.patch('/:studentId', studentsController.updateOneStudent);
 
-// //특정 학생 정보 삭제
-// studentsRouter.delete('/:studentId',studentsController.deleteStudent);
+//특정 학생 정보 삭제
+studentsRouter.delete('/:studentId', studentsController.deleteOneStudent);
 
 export { studentsRouter };
