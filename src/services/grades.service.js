@@ -61,7 +61,7 @@ class GradesService {
     if (!getData) throw new NotFoundError('값을 불러오지 못했습니다.');
 
     // studentId에 맞는 학생이 없을 시, 에러 반환
-    //const existedStudent =
+    //const existedStudent
 
     const grades = await this.gradeRepository.updateGrades(
       schoolYear,
