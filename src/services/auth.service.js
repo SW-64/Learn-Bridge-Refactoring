@@ -5,6 +5,7 @@ import {
   ConflictError,
   UnauthorizedError,
   BadRequestError,
+  NotFoundError,
 } from '../errors/http.error.js';
 import { authConstant } from '../constants/auth.constant.js';
 import {
@@ -12,10 +13,11 @@ import {
   REFRESH_TOKEN_SECRET,
 } from '../constants/env.constant.js';
 import { MESSAGES } from '../constants/message.constant.js';
+import SchoolRepository from '../repositories/school.repository.js';
 
 class AuthService {
   authRepository = new AuthRepository();
-
+  schoolRepository = new SchoolRepository();
   signUp = async ({
     email,
     name,
@@ -27,6 +29,7 @@ class AuthService {
     grade,
     number,
     gradeClass,
+    schoolName,
   }) => {
     // 이메일이 이미 존재한다면 에러 반환
     const existedUser = await this.authRepository.findUserByEmail(email);
@@ -41,16 +44,22 @@ class AuthService {
       );
     }
 
-    // 학생이 과목을 작성할려는 경우 에러발생
+    // 학생이 과목을 작성할려는 경우 에러 반환
     if (role == 'STUDENT' && subject) {
       throw new BadRequestError(MESSAGES.AUTH.SIGN_UP.STUDENT_INVALID);
     }
 
-    // 선생님이 학년, 반, 출석번호를 작성하려는 경우 에러발생
+    // 선생님이 학년, 반, 출석번호를 작성하려는 경우 에러 반환
     if (role == 'TEACHER' && (grade || number || gradeClass)) {
       throw new BadRequestError(MESSAGES.AUTH.SIGN_UP.TEACHER_INVALID);
     }
 
+    // 해당 학교명이 데이터에 없다면 에러 반환
+    const existedSchool =
+      await this.schoolRepository.findSchoolBySchoolName(schoolName);
+    if (!existedSchool) throw new NotFoundError('해당되는 학교가 없습니다.');
+
+    const schoolId = existedSchool.schoolId;
     const data = await this.authRepository.create({
       email,
       name,
@@ -61,6 +70,7 @@ class AuthService {
       grade,
       number,
       gradeClass,
+      schoolId,
     });
 
     return data;

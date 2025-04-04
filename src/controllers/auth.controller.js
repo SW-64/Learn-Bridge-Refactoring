@@ -19,6 +19,7 @@ class AuthController {
         grade,
         number,
         gradeClass,
+        schoolName,
       } = req.body;
 
       const data = await this.authService.signUp({
@@ -32,6 +33,7 @@ class AuthController {
         grade,
         number,
         gradeClass,
+        schoolName,
       });
 
       return res.status(HTTP_STATUS.CREATED).json({
