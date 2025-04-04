@@ -26,4 +26,7 @@ apiRouter.use('/api/v1/feedback', feedbackRouter);
 // 상담 라우터
 apiRouter.use('/api/v1/consultation', consultationRouter);
 
+// 유저 라우터
+apiRouter.use('/api/v1/users');
+
 export { apiRouter };
