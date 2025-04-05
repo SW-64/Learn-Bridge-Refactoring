@@ -9,7 +9,6 @@ class SchoolController{
     getAllSchool = async(req, res, next) => {
         try {
             const { schoolName } = req.body;
-            console.log(schoolName);
 
             const data = await this.schoolService.getAllSchool(schoolName);
             
