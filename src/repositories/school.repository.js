@@ -4,7 +4,7 @@ class SchoolRepository {
   findSchoolBySchoolName = async (schoolName) => {
     const data = await prisma.school.findUnique({
       where: {
-        schoolName,
+        schoolName:schoolName,
       },
     });
     return data;
