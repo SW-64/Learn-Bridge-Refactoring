@@ -14,22 +14,22 @@ const apiRouter = express.Router();
 apiRouter.use('/api/v1/auth', authRouter);
 
 // 학생 관리 라우터
-apiRouter.use('/api/v1/students', studentsRouter);
+apiRouter.use('/api/v1/school/:schoolId', studentsRouter);
 
 // 학생부( 출결 / 상세정보 ) 라우터
-apiRouter.use('/api/v1/student-record', studentRecordRouter);
+apiRouter.use('/api/v1/school/:schoolId/student-record', studentRecordRouter);
 
 // 성적 라우터
-apiRouter.use('/api/v1/grades', gradesRouter);
+apiRouter.use('/api/v1/school/:schoolId/grades', gradesRouter);
 
 // 피드백 라우터
-apiRouter.use('/api/v1/feedback', feedbackRouter);
+apiRouter.use('/api/v1/school/:schoolId/feedback', feedbackRouter);
 
 // 상담 라우터
-apiRouter.use('/api/v1/consultation', consultationRouter);
+apiRouter.use('/api/v1/school/:schoolId/consultation', consultationRouter);
 
 // 유저 라우터
-apiRouter.use('/api/v1/users', userRouter);
+apiRouter.use('//api/v1/school/:schoolId/users', userRouter);
 
 // 학교 라우터
 apiRouter.use('/api/v1/school', schoolRouter);
