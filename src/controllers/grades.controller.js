@@ -37,7 +37,6 @@ class GradesController {
 
       // 쿼리문으로 과목 or ( 학년, 학기 ) 값 받기
       const { subject, schoolYear, semester } = req.query;
-      console.log(subject, schoolYear, semester);
 
       const grades = await this.gradesService.getGrades(
         +schoolYear,
