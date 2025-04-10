@@ -1,9 +1,10 @@
 import { NotFoundError } from '../errors/http.error.js';
 import GradesRepository from '../repositories/grades.repository.js';
+import StudentsRepository from '../repositories/students.repository.js';
 
 class GradesService {
   gradeRepository = new GradesRepository();
-
+  studentRepository = new StudentsRepository();
   // 성적 입력
   createGrades = async (schoolYear, semester, subject, score, studentId) => {
     // 받아온 값 중, 하나라도 없으면 에러 반환
@@ -25,17 +26,20 @@ class GradesService {
   // 성적 조회
   getGrades = async (schoolYear, semester, subject, studentId) => {
     // 과목 or ( 학년, 학기 ) 중 어느 한쪽도 받지 못했다면 에러 반환
-    const getData = schoolYear || semester || subject;
-    if (!getData)
+    const hasValidQuery = (schoolYear && semester) || subject;
+    if (!hasValidQuery)
       throw new NotFoundError(
         '과목 or ( 학년, 학기 ) 중 하나의 값을 입력해주세요',
       );
 
     // studentId에 맞는 학생이 없을 시, 에러 반환
-    //const existedStudent =
+    const existedStudent =
+      await this.studentRepository.getOneStudent(studentId);
+    if (!existedStudent)
+      throw new NotFoundError('해당 학생이 존재하지 않습니다.');
 
     // 특정 과목에 대한 성적 조회일 시
-    if (!schoolYear && !semester) {
+    if (subject) {
       const grades = await this.gradeRepository.getGradesBySubject(
         subject,
         studentId,
@@ -44,7 +48,7 @@ class GradesService {
     }
 
     // 특정 기간에 대한 성적 조회일 시
-    else if (!subject) {
+    else if (schoolYear && semester) {
       const grades = await this.gradeRepository.getGradesByPeriod(
         schoolYear,
         semester,
