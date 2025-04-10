@@ -85,7 +85,7 @@ class AuthService {
       throw new UnauthorizedError(MESSAGES.AUTH.COMMON.UNAUTHORIZED);
     }
 
-    const payload = { id: user.id, role: user.role };
+    const payload = { id: user.id, role: user.role, schoolId: user.schoolId };
 
     // accessToken, refreshToken 생성
     const data = await this.generateAuthTokens(payload);
