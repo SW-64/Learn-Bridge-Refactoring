@@ -58,6 +58,8 @@ class AuthService {
     const existedSchool =
       await this.schoolRepository.findSchoolBySchoolName(schoolName);
     if (!existedSchool) throw new NotFoundError('해당되는 학교가 없습니다.');
+
+    // schoolRepository에서 값을 배열로 받아 오기 때문에 인덱스로 단일 값만 받아옴
     const school = existedSchool[0];
     const schoolId = school.schoolId;
     

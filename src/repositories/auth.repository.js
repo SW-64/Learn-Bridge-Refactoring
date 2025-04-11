@@ -29,6 +29,7 @@ class AuthRepository {
         role,
         photo,
         password: hashedPassword,
+        // 유저 테이블과 학교 테이블을 연결
         school: {
           connect: {
             schoolId: schoolId,
