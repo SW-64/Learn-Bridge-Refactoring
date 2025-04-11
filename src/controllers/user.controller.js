@@ -36,6 +36,29 @@ class UserController {
       next(err);
     }
   };
+
+  // 내 비밀번호 수정
+  updateMyPassword = async (req, res, next) => {
+    try {
+      const userId = req.user.id;
+
+      const { currentPassword, newPassword } = req.body;
+
+      const data = await this.userService.updateMyPassword(
+        userId,
+        currentPassword,
+        newPassword,
+      );
+
+      return res.status(HTTP_STATUS.OK).json({
+        status: HTTP_STATUS.OK,
+        message: '내 정보 수정 성공',
+        data,
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
 }
 
 export default UserController;
