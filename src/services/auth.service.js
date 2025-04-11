@@ -58,8 +58,9 @@ class AuthService {
     const existedSchool =
       await this.schoolRepository.findSchoolBySchoolName(schoolName);
     if (!existedSchool) throw new NotFoundError('해당되는 학교가 없습니다.');
-
-    const schoolId = existedSchool.schoolId;
+    const school = existedSchool[0];
+    const schoolId = school.schoolId;
+    
     const data = await this.authRepository.create({
       email,
       name,

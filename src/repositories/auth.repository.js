@@ -29,7 +29,11 @@ class AuthRepository {
         role,
         photo,
         password: hashedPassword,
-        schoolId,
+        school: {
+          connect: {
+            schoolId: schoolId,
+          }
+        },
         //...(role === 'TEACHER' && { subject }), // 선생님인 경우 과목 작성
         ...(role === 'TEACHER' && {
           // 선생님일 경우 teacher 테이블 생성
@@ -54,6 +58,7 @@ class AuthRepository {
     });
 
     data.password = undefined;
+    return data;
   };
 
   // 이메일로 유저 찾기
