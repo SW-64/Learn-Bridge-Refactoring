@@ -40,7 +40,6 @@ model Teacher {
 
     user         User           @relation(fields: [userId], references: [id])
     Consultation Consultation[]
-    Feedback     Feedback[]
     class        Class?
 
     @@map("teachers")
@@ -153,8 +152,7 @@ model Consultation {
 model Feedback {
     feedbackId Int      @id @default(autoincrement()) @map("feedback_id")
     studentId  Int      @map("student_id")
-    teacherId  Int      @map("teacher_id")
-    date       DateTime
+    schoolYear Int
     category   Category
     content    String
     title      String   @map("title")
@@ -162,7 +160,6 @@ model Feedback {
     updatedAt  DateTime @updatedAt @map("updated_at")
 
     student Student @relation(fields: [studentId], references: [studentId])
-    teacher Teacher @relation(fields: [teacherId], references: [teacherId])
 
     @@map("feedback")
 }
