@@ -3,9 +3,6 @@ class UserRepository {
   getUserById = async (userId) => {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      include: {
-        school: true,
-      },
       data: {
         name: true,
         ...(user.role === 'TEACHER' && {
@@ -15,6 +12,11 @@ class UserRepository {
             },
           },
         }),
+        school: {
+          include: {
+            schoolName: true,
+          },
+        },
       },
     });
     return user;
