@@ -30,11 +30,7 @@ class AuthRepository {
         photo,
         password: hashedPassword,
         // 유저 테이블과 학교 테이블을 연결
-        school: {
-          connect: {
-            schoolId: schoolId,
-          }
-        },
+        schoolId,
         //...(role === 'TEACHER' && { subject }), // 선생님인 경우 과목 작성
         ...(role === 'TEACHER' && {
           // 선생님일 경우 teacher 테이블 생성

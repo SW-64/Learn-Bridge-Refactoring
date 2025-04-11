@@ -9,9 +9,11 @@ class UserController {
   // 담임 설정 및 반 생성
   assignHomeRoom = async (req, res, next) => {
     try {
-      const { grade, gradeClass, teacherId } = req.body;
-      
-      const data = await this.userService.assignHomeRoom(grade, gradeClass, +teacherId);
+      const userId = req.user.id;
+
+      const { grade, gradeClass } = req.body;
+
+      const data = await this.userService.assignHomeRoom(grade, gradeClass, userId);
 
       return res.status(HTTP_STATUS.OK).json({
         status: HTTP_STATUS.OK,

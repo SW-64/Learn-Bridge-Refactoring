@@ -19,11 +19,7 @@ class UserRepository {
                 grade,
                 gradeClass,
                 //반 테이블과 교사 테이블을 연결
-                teacher: {
-                    connect: {
-                        teacherId:teacherId
-                    }
-                },
+                teacherId,
             },
 
             
