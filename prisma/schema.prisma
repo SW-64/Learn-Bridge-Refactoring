@@ -33,11 +33,11 @@ model User {
 }
 
 model Teacher {
-    teacherId Int      @id @default(autoincrement()) @map("teacher_id")
-    userId    Int      @unique @map("user_id")
-    subject   String
-    createdAt DateTime @default(now()) @map("created_at")
-
+    teacherId    Int            @id @default(autoincrement()) @map("teacher_id")
+    userId       Int            @unique @map("user_id")
+    subject      String
+    createdAt    DateTime       @default(now()) @map("created_at")
+    isHomeroom   Boolean        @default(false) @map("is_homeroom")
     user         User           @relation(fields: [userId], references: [id])
     Consultation Consultation[]
     class        Class?

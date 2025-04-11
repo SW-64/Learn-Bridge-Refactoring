@@ -1,3 +1,4 @@
+import { HTTP_STATUS } from '../constants/http-status.constant.js';
 import UserService from '../services/user.service.js';
 
 class UserController {
@@ -13,6 +14,22 @@ class UserController {
       return res.status(HTTP_STATUS.OK).json({
         status: HTTP_STATUS.OK,
         message: '담임 설정 및 반 생성 성공',
+        data,
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  // 내 정보 조회
+  getMyInfo = async (req, res, next) => {
+    try {
+      const userId = req.user.id;
+      const data = await this.userService.getMyInfo(userId);
+
+      return res.status(HTTP_STATUS.OK).json({
+        status: HTTP_STATUS.OK,
+        message: '내 정보 조회 성공',
         data,
       });
     } catch (err) {

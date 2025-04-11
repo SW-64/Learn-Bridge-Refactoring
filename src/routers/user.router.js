@@ -12,4 +12,7 @@ const userController = new UserController(userService);
 // 담임 설정 및 반 생성
 userRouter.post('/assign-homeroom', userController.assignHomeRoom);
 
+// 내 정보 조회
+userRouter.get('/me', userController.getMyInfo);
+
 export { userRouter };
