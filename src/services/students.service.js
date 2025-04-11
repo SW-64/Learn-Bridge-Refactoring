@@ -6,44 +6,54 @@ class StudentsService {
   studentsRepository = new StudentsRepository();
 
   //전체 학생 목록 조회
-  getAllStudent= async(userId) => {
+  getAllStudent = async (userId) => {
     const data = await this.studentsRepository.getAllStudent(userId);
     return data;
   };
 
   //특정 학생 상세 조회 , 유효성 검사
-  getOneStudent = async(studentId) => {
+  getOneStudent = async (studentId) => {
     const student = await this.studentsRepository.getOneStudent(studentId);
-    if(!student) {
-      throw new NotFoundError(MESSAGES.STUDENT.COMMON.NOT_FOUND)
+    if (!student) {
+      throw new NotFoundError(MESSAGES.STUDENT.COMMON.NOT_FOUND);
     }
     return student;
   };
-  
-  //특정 학생 정보 수정
-  updateOneStudent = async(studentId, updateData) => {
 
+  //특정 학생 정보 수정
+  updateOneStudent = async (studentId, updateData) => {
     //유효성 검사 추가
-    const student = await this.studentsRepository.getOneStudent(studentId); 
-    if(!student) {
-      throw new NotFoundError(MESSAGES.STUDENT.COMMON.NOT_FOUND)
+    const student = await this.studentsRepository.getOneStudent(studentId);
+    if (!student) {
+      throw new NotFoundError(MESSAGES.STUDENT.COMMON.NOT_FOUND);
     }
 
-    const data = await this.studentsRepository.updateOneStudent(studentId, updateData);
+    const data = await this.studentsRepository.updateOneStudent(
+      studentId,
+      updateData,
+    );
     return data;
   };
 
   //특정 학생 정보 삭제
-  deleteOneStudent = async(studentId) => {
-
+  deleteOneStudent = async (studentId) => {
     //유효성 검사 추가
     const student = await this.studentsRepository.getOneStudent(studentId);
-    if(!student) {
-      throw new NotFoundError(MESSAGES.STUDENT.COMMON.NOT_FOUND)
+    if (!student) {
+      throw new NotFoundError(MESSAGES.STUDENT.COMMON.NOT_FOUND);
     }
 
     const data = await this.studentsRepository.deleteOneStudent(studentId);
     return data;
-  }
-};
+  };
+
+  // 특정 학생 정보 검색
+  searchStudent = async (name) => {
+    const student = await this.studentsRepository.searchStudent(name);
+    if (!student) {
+      throw new NotFoundError(MESSAGES.STUDENT.COMMON.NOT_FOUND);
+    }
+    return student;
+  };
+}
 export default StudentsService;
