@@ -30,8 +30,8 @@ class UserRepository {
         });
         return data;
     }
-}
-class UserRepository {
+
+
   // 내 정보 조회
   getUserById = async (userId) => {
     const user = await this.prisma.user.findUnique({

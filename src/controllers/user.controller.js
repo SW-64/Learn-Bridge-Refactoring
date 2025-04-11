@@ -1,6 +1,6 @@
 import { HTTP_STATUS } from '../constants/http-status.constant.js';
 import UserService from '../services/user.service.js';
-import { HTTP_STATUS } from '../constants/http-status.constant.js';
+
 
 
 class UserController {
