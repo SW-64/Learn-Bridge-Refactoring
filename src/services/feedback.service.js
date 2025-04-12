@@ -1,4 +1,4 @@
-import { NotFoundError } from '../errors/http.error.js';
+import { BadRequestError, NotFoundError } from '../errors/http.error.js';
 import FeedbackRepository from '../repositories/feedback.repository.js';
 import StudentsRepository from '../repositories/students.repository.js';
 import TeacherRepository from '../repositories/teacher.repository.js';
@@ -20,6 +20,15 @@ class FeedbackService {
           `카테고리가 없거나 유효하지 않은 카테고리입니다: ${item.category}`,
         );
       }
+      const existeedFeedback = await this.feedbackRepository.getFeedbackDetail(
+        schoolYear,
+        studentId,
+        item.category,
+      );
+      if (existeedFeedback)
+        throw new BadRequestError(
+          `이미 존재하는 피드백입니다: ${item.category}`,
+        );
     }
 
     const hasRequiredData = studentId && feedback && schoolYear;
@@ -56,7 +65,7 @@ class FeedbackService {
     if (!hasRequiredData) throw new NotFoundError('값을 불러오지 못했습니다.');
 
     const existedStudent =
-      await this.feedbackRepository.getOneStudent(studentId);
+      await this.studentRepository.getOneStudent(studentId);
     if (!existedStudent)
       throw new NotFoundError('해당 학생이 존재하지 않습니다.');
 
@@ -74,7 +83,7 @@ class FeedbackService {
 
     // studentId에 맞는 학생이 없을 시, 에러 반환
     const existedStudent =
-      await this.feedbackRepository.getOneStudent(studentId);
+      await this.studentRepository.getOneStudent(studentId);
     if (!existedStudent) throw new Error('해당 학생이 존재하지 않습니다.');
 
     const feedback = await this.feedbackRepository.getFeedback(

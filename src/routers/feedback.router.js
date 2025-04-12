@@ -24,7 +24,7 @@ feedbackRouter.patch(
   '/students/:studentId',
   requireAccessToken('TEACHER'),
   verifySchoolUser,
-  feedbackController.createFeedback,
+  feedbackController.updateFeedback,
 );
 
 // 피드백 조회
