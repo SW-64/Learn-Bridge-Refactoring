@@ -1,4 +1,4 @@
-import {prisma} from '../utils/prisma.utils.js';
+import { prisma } from '../utils/prisma.utils.js';
 
 class TeacherRepository {
   // 선생님 조회
@@ -6,6 +6,19 @@ class TeacherRepository {
     const data = await prisma.teacher.findUnique({
       where: {
         userId,
+      },
+    });
+    return data;
+  };
+
+  // 담임 설정
+  setHomeroom = async (teacherId) => {
+    const data = await prisma.teacher.update({
+      where: {
+        teacherId,
+      },
+      data: {
+        isHomeroom: true,
       },
     });
     return data;

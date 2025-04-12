@@ -3,19 +3,36 @@ import FeedbackRepository from '../repositories/feedback.repository.js';
 import { prisma } from '../utils/prisma.utils.js';
 import FeedbackService from '../services/feedback.service.js';
 import FeedbackController from '../controllers/feedback.controller.js';
+import { requireAccessToken } from '../middlewares/require-access-token.middleware.js';
+import { verifySchoolUser } from '../middlewares/verify-school-user.middleware.js';
 
-const feedbackRouter = express.Router();
+const feedbackRouter = express.Router({ mergeParams: true });
 const feedbackRepository = new FeedbackRepository(prisma);
 const feedbackService = new FeedbackService(feedbackRepository);
 const feedbackController = new FeedbackController(feedbackService);
 
 // 피드백 작성
-feedbackRouter.post('/students/:studentId', feedbackController.createFeedback);
+feedbackRouter.post(
+  '/students/:studentId',
+  requireAccessToken('TEACHER'),
+  verifySchoolUser,
+  feedbackController.createFeedback,
+);
 
 // 피드백 수정
-feedbackRouter.patch('/students/:studentId', feedbackController.createFeedback);
+feedbackRouter.patch(
+  '/students/:studentId',
+  requireAccessToken('TEACHER'),
+  verifySchoolUser,
+  feedbackController.updateFeedback,
+);
 
 // 피드백 조회
-feedbackRouter.get('/students/:studentId', feedbackController.getFeedback);
+feedbackRouter.get(
+  '/students/:studentId',
+  requireAccessToken('TEACHER'),
+  verifySchoolUser,
+  feedbackController.getFeedback,
+);
 
 export { feedbackRouter };
