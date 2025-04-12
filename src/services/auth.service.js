@@ -14,10 +14,13 @@ import {
 } from '../constants/env.constant.js';
 import { MESSAGES } from '../constants/message.constant.js';
 import SchoolRepository from '../repositories/school.repository.js';
+import UserRepository from '../repositories/user.repository.js';
 
 class AuthService {
   authRepository = new AuthRepository();
   schoolRepository = new SchoolRepository();
+  userRepository = new UserRepository();
+
   signUp = async ({
     email,
     name,
@@ -62,6 +65,10 @@ class AuthService {
     // schoolRepository에서 값을 배열로 받아 오기 때문에 인덱스로 단일 값만 받아옴
     const school = existedSchool[0];
     const schoolId = school.schoolId;
+
+    // 반 데이터에서 id 가져오기
+    const classdata = await this.userRepository.findClass(grade, gradeClass);
+    const classId = classdata.classId;
     
     const data = await this.authRepository.create({
       email,
@@ -74,6 +81,7 @@ class AuthService {
       number,
       gradeClass,
       schoolId,
+      classId,
     });
 
     return data;
