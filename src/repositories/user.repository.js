@@ -1,5 +1,6 @@
+import { authConstant } from '../constants/auth.constant.js';
 import { prisma } from '../utils/prisma.utils.js';
-
+import bcrypt from 'bcrypt';
 class UserRepository {
   // 반 or 담임 조회 (유효성 검증)
   findClass = async (grade, gradeClass) => {
@@ -50,7 +51,7 @@ class UserRepository {
 
   // 내 비밀번호 조회
   getUserPassword = async (userId) => {
-    const user = await this.prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
         password: true,
@@ -60,13 +61,18 @@ class UserRepository {
   };
 
   // 내 비밀번호 수정
-  updateUserPassword = async (userId, password) => {
-    const user = await this.prisma.user.update({
+  updateMyPassword = async (userId, password) => {
+    const hashedPassword = bcrypt.hashSync(
+      password,
+      authConstant.HASH_SALT_ROUNDS,
+    );
+    const user = await prisma.user.update({
       where: { id: userId },
       data: {
-        password,
+        password: hashedPassword,
       },
     });
+    user.password = undefined;
     return user;
   };
 }
