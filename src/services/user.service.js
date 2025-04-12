@@ -20,6 +20,7 @@ class UserService {
     const teacher = await this.teacherRepository.findTeacherByUserId(userId);
     const teacherId = teacher.teacherId;
 
+    const setHomeroom = await this.teacherRepository.setHomeroom(teacherId);
     const data = await this.userRepository.createClass(
       grade,
       gradeClass,
