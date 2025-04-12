@@ -15,6 +15,7 @@ class AuthRepository {
     number,
     gradeClass,
     schoolId,
+    classId,
   }) => {
     //비밀번호 암호화처리
     const hashedPassword = bcrypt.hashSync(
@@ -47,6 +48,8 @@ class AuthRepository {
               grade,
               number,
               gradeClass,
+              // 학생 테이블과 반 테이블 연결
+              classId,
             },
           },
         }),
