@@ -1,10 +1,13 @@
 import { NotFoundError } from '../errors/http.error.js';
 import FeedbackRepository from '../repositories/feedback.repository.js';
+import StudentsRepository from '../repositories/students.repository.js';
 import TeacherRepository from '../repositories/teacher.repository.js';
+import { FEEDBACK_CATEGORY } from './../constants/feedback-category.constant.js';
 
 class FeedbackService {
   feedbackRepository = new FeedbackRepository();
   teacherRepository = new TeacherRepository();
+  studentRepository = new StudentsRepository();
   // 피드백 작성
   createFeedback = async (studentId, feedback, schoolYear) => {
     // 필요한 값 가져오기
@@ -23,7 +26,7 @@ class FeedbackService {
     if (!hasRequiredData) throw new NotFoundError('값을 불러오지 못했습니다.');
 
     const existedStudent =
-      await this.feedbackRepository.getOneStudent(studentId);
+      await this.studentRepository.getOneStudent(studentId);
     if (!existedStudent)
       throw new NotFoundError('해당 학생이 존재하지 않습니다.');
 

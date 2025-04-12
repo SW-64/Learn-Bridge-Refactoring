@@ -155,7 +155,6 @@ model Feedback {
     schoolYear Int
     category   Category
     content    String
-    title      String   @map("title")
     createdAt  DateTime @default(now()) @map("created_at")
     updatedAt  DateTime @updatedAt @map("updated_at")
 
