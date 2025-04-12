@@ -1,8 +1,6 @@
 import { HTTP_STATUS } from '../constants/http-status.constant.js';
 import UserService from '../services/user.service.js';
 
-
-
 class UserController {
   userService = new UserService();
 
@@ -13,7 +11,11 @@ class UserController {
 
       const { grade, gradeClass } = req.body;
 
-      const data = await this.userService.assignHomeRoom(grade, gradeClass, userId);
+      const data = await this.userService.assignHomeRoom(
+        grade,
+        gradeClass,
+        userId,
+      );
 
       return res.status(HTTP_STATUS.OK).json({
         status: HTTP_STATUS.OK,
@@ -29,7 +31,8 @@ class UserController {
   getMyInfo = async (req, res, next) => {
     try {
       const userId = req.user.id;
-      const data = await this.userService.getMyInfo(userId);
+      const userRole = req.user.role;
+      const data = await this.userService.getMyInfo(userId, userRole);
 
       return res.status(HTTP_STATUS.OK).json({
         status: HTTP_STATUS.OK,
