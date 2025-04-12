@@ -4,6 +4,7 @@ import GradesService from '../services/grades.service.js';
 import GradesController from '../controllers/grades.controller.js';
 import { prisma } from '../utils/prisma.utils.js';
 import { requireAccessToken } from '../middlewares/require-access-token.middleware.js';
+import { verifySchoolUser } from '../middlewares/verify-school-user.middleware.js';
 
 const gradesRouter = express.Router();
 const gradesRepository = new GradesRepository(prisma);
@@ -14,6 +15,7 @@ const gradesController = new GradesController(gradesService);
 gradesRouter.post(
   '/students/:studentId',
   requireAccessToken('TEACHER'),
+  verifySchoolUser,
   gradesController.createGrades,
 );
 
@@ -21,6 +23,7 @@ gradesRouter.post(
 gradesRouter.get(
   '/students/:studentId',
   requireAccessToken('TEACHER'),
+  verifySchoolUser,
   gradesController.getGrades,
 );
 
@@ -28,6 +31,7 @@ gradesRouter.get(
 gradesRouter.patch(
   '/students/:studentId',
   requireAccessToken('TEACHER'),
+  verifySchoolUser,
   gradesController.updateGrades,
 );
 export { gradesRouter };
