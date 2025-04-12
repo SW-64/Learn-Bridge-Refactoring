@@ -6,7 +6,7 @@ import { prisma } from '../utils/prisma.utils.js';
 import { requireAccessToken } from '../middlewares/require-access-token.middleware.js';
 import { verifySchoolUser } from '../middlewares/verify-school-user.middleware.js';
 
-const studentsRouter = express.Router();
+const studentsRouter = express.Router({ mergeParams: true });
 const studentsRepository = new StudentsRepository(prisma);
 const studentsService = new StudentsService(studentsRepository);
 const studentsController = new StudentsController(studentsService);

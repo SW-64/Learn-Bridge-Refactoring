@@ -6,7 +6,7 @@ import FeedbackController from '../controllers/feedback.controller.js';
 import { requireAccessToken } from '../middlewares/require-access-token.middleware.js';
 import { verifySchoolUser } from '../middlewares/verify-school-user.middleware.js';
 
-const feedbackRouter = express.Router();
+const feedbackRouter = express.Router({ mergeParams: true });
 const feedbackRepository = new FeedbackRepository(prisma);
 const feedbackService = new FeedbackService(feedbackRepository);
 const feedbackController = new FeedbackController(feedbackService);
