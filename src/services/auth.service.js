@@ -67,9 +67,14 @@ class AuthService {
     const schoolId = school.schoolId;
 
     // 반 데이터에서 id 가져오기
-    const classdata = await this.userRepository.findClass(grade, gradeClass);
-    const classId = classdata.classId;
-    
+    const classId =
+      role === 'STUDENT'
+        ? ((await this.userRepository.findClass(grade, gradeClass))?.classId ??
+          (() => {
+            throw new NotFoundError('해당 반이 존재하지 않습니다.');
+          })())
+        : null;
+
     const data = await this.authRepository.create({
       email,
       name,
