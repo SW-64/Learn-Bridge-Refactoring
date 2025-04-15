@@ -11,9 +11,9 @@ const studentsRepository = new StudentsRepository(prisma);
 const studentsService = new StudentsService(studentsRepository);
 const studentsController = new StudentsController(studentsService);
 
-// 전체 학생 목록 조회
+// 반 학생 목록 조회
 studentsRouter.get(
-  '/',
+  '/students',
   requireAccessToken('TEACHER'),
   verifySchoolUser,
   studentsController.getAllStudent,
@@ -21,27 +21,27 @@ studentsRouter.get(
 
 // 특정 학생 상세 조회
 studentsRouter.get(
-  '/:studentId',
+  '/students/:studentId',
   requireAccessToken('TEACHER'),
   verifySchoolUser,
   studentsController.getOneStudent,
 );
 
 // 특정 학생 정보 수정
-studentsRouter.patch(
-  '/:studentId',
-  requireAccessToken('TEACHER'),
-  verifySchoolUser,
-  studentsController.updateOneStudent,
-);
+// studentsRouter.patch(
+//   '/:studentId',
+//   requireAccessToken('TEACHER'),
+//   verifySchoolUser,
+//   studentsController.updateOneStudent,
+// );
 
 // 특정 학생 정보 삭제
-studentsRouter.delete(
-  '/:studentId',
-  requireAccessToken('TEACHER'),
-  verifySchoolUser,
-  studentsController.deleteOneStudent,
-);
+// studentsRouter.delete(
+//   '/:studentId',
+//   requireAccessToken('TEACHER'),
+//   verifySchoolUser,
+//   studentsController.deleteOneStudent,
+// );
 
 // 특정 학생 정보 검색
 studentsRouter.get(

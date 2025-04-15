@@ -14,6 +14,7 @@ class StudentsService {
   //특정 학생 상세 조회 , 유효성 검사
   getOneStudent = async (studentId) => {
     const student = await this.studentsRepository.getOneStudent(studentId);
+    console.log(student);
     if (!student) {
       throw new NotFoundError(MESSAGES.STUDENT.COMMON.NOT_FOUND);
     }

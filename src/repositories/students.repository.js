@@ -13,13 +13,24 @@ class StudentsRepository {
 
   //특정 학생 상세 조회
   getOneStudent = async (studentId) => {
+    console.log(studentId);
     const student = await prisma.student.findUnique({
       where: {
         studentId: studentId,
       },
-
-      include: {
-        user: true,
+      select: {
+        studentId: true,
+        grade: true,
+        number: true,
+        gradeClass: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            photo: true,
+          },
+        },
       },
     });
     return student;
