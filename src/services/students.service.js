@@ -5,9 +5,9 @@ import StudentsRepository from '../repositories/students.repository.js';
 class StudentsService {
   studentsRepository = new StudentsRepository();
 
-  //전체 학생 목록 조회
-  getAllStudent = async (userId) => {
-    const data = await this.studentsRepository.getAllStudent(userId);
+  //반 학생 목록 조회
+  getClassStudent = async (classId) => {
+    const data = await this.studentsRepository.getClassStudent(classId);
     return data;
   };
 

@@ -1,11 +1,22 @@
 import { prisma } from '../utils/prisma.utils.js';
 
 class StudentsRepository {
-  //전체 학생 목록 조회
-  getAllStudent = async () => {
+  //반 학생 목록 조회
+  getClassStudent = async (classId) => {
     const students = await prisma.student.findMany({
-      include: {
-        user: true,
+      where: {
+        classId,
+      },
+      select: {
+        studentId: true,
+        grade: true,
+        number: true,
+        gradeClass: true,
+        user: {
+          select: {
+            name: true,
+          },
+        },
       },
     });
     return students;

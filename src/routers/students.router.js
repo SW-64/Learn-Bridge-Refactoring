@@ -5,6 +5,7 @@ import StudentsController from '../controllers/students.controller.js';
 import { prisma } from '../utils/prisma.utils.js';
 import { requireAccessToken } from '../middlewares/require-access-token.middleware.js';
 import { verifySchoolUser } from '../middlewares/verify-school-user.middleware.js';
+import { verifyHomeroomTeacher } from './../middlewares/verify-homeroom-teacher-middleware.js';
 
 const studentsRouter = express.Router({ mergeParams: true });
 const studentsRepository = new StudentsRepository(prisma);
@@ -13,10 +14,11 @@ const studentsController = new StudentsController(studentsService);
 
 // 반 학생 목록 조회
 studentsRouter.get(
-  '/students',
+  '/class/:classId/students',
   requireAccessToken('TEACHER'),
   verifySchoolUser,
-  studentsController.getAllStudent,
+  verifyHomeroomTeacher,
+  studentsController.getClassStudent,
 );
 
 // 특정 학생 상세 조회
