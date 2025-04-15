@@ -2,15 +2,9 @@ import { prisma } from '../utils/prisma.utils.js';
 
 class GradesRepository {
   // 성적 입력
-  createGrades = async (schoolYear, semester, subject, score, studentId) => {
-    const data = await prisma.grade.create({
-      data: {
-        schoolYear,
-        semester,
-        subject,
-        score,
-        studentId,
-      },
+  createGrades = async (gradesWithStudentId) => {
+    const data = await prisma.grade.createMany({
+      data: gradesWithStudentId,
     });
     return data;
   };
@@ -39,15 +33,65 @@ class GradesRepository {
   };
 
   // 성적 수정
-  updateGrades = async (schoolYear, semester, subject, studentId, score) => {
-    const data = await prisma.grade.update({
+  updateGrades = async (gradesWithStudentId) => {
+    const grades = gradesWithStudentId.map((grade) =>
+      prisma.grade.updateMany({
+        where: {
+          studentId: grade.studentId,
+          schoolYear: grade.schoolYear,
+          semester: grade.semester,
+          subject: grade.subject,
+        },
+        data: {
+          score: grade.score,
+        },
+      }),
+    );
+    const results = await Promise.all(grades);
+    return results;
+  };
+
+  // 특정 기간에 맞는 특정 과목 성적 조회
+  getGradesByPeriodAndSubject = async (
+    subject,
+    studentId,
+    schoolYear,
+    semester,
+  ) => {
+    const data = await prisma.grade.findFirst({
       where: {
-        studentId,
-        semester,
         schoolYear,
+        semester,
         subject,
+        studentId,
       },
-      data: score,
+    });
+    return data;
+  };
+
+  // 반 학생 성적 조회
+  getClassGrades = async (classId, semester) => {
+    const data = await prisma.grade.findMany({
+      where: {
+        semester,
+        // student: {
+        //   classId,
+        // },
+      },
+      select: {
+        subject: true,
+        score: true,
+        student: {
+          select: {
+            studentId: true,
+            user: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
     });
     return data;
   };
