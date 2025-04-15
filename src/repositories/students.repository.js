@@ -60,10 +60,24 @@ class StudentsRepository {
           contains: name,
         },
       },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        student: {
+          select: {
+            grade: true,
+            number: true,
+            gradeClass: true,
+          },
+        },
+      },
       // include: {
       //   user: true,
       // },
     });
+    student.password = undefined;
+
     return student;
   };
 }
