@@ -14,7 +14,7 @@ class FeedbackController {
       const feedback = await this.feedbackService.createFeedback(
         +studentId,
         content,
-        schoolYear,
+        +schoolYear,
       );
 
       return res.status(HTTP_STATUS.CREATED).json({
@@ -37,7 +37,7 @@ class FeedbackController {
       const feedback = await this.feedbackService.updateFeedback(
         +studentId,
         content,
-        schoolYear,
+        +schoolYear,
       );
 
       return res.status(HTTP_STATUS.OK).json({
@@ -57,7 +57,7 @@ class FeedbackController {
 
       const feedback = await this.feedbackService.getFeedback(
         +studentId,
-        schoolYear,
+        +schoolYear,
       );
 
       return res.status(HTTP_STATUS.OK).json({

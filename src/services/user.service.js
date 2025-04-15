@@ -1,9 +1,9 @@
-import { ConflictError } from '../errors/http.error.js';
+import { ConflictError, UnauthorizedError } from '../errors/http.error.js';
 import { MESSAGES } from '../constants/message.constant.js';
 import { NotFoundError } from '../errors/http.error.js';
 import UserRepository from '../repositories/user.repository.js';
 import TeacherRepository from '../repositories/teacher.repository.js';
-
+import bcrypt from 'bcrypt';
 class UserService {
   userRepository = new UserRepository();
   teacherRepository = new TeacherRepository();
@@ -20,6 +20,7 @@ class UserService {
     const teacher = await this.teacherRepository.findTeacherByUserId(userId);
     const teacherId = teacher.teacherId;
 
+    const setHomeroom = await this.teacherRepository.setHomeroom(teacherId);
     const data = await this.userRepository.createClass(
       grade,
       gradeClass,
@@ -28,19 +29,18 @@ class UserService {
     return data;
   };
   // 내 정보 조회
-  getMyInfo = async (userId) => {
-    const user = await this.userRepository.getUserById(userId);
+  getMyInfo = async (userId, userRole) => {
+    const user = await this.userRepository.getUserById(userId, userRole);
     if (!user) throw new Error('유저를 찾을 수 없습니다.');
     return user;
   };
 
   // 내 비밀번호 수정
   updateMyPassword = async (userId, currentPassword, newPassword) => {
-    const userPassword = await this.userRepository.getUserPassword(userId);
-    if (!userPassword) throw new NotFoundError('유저를 찾을 수 없습니다.');
+    const user = await this.userRepository.getUserPassword(userId);
+    if (!user) throw new NotFoundError('유저를 찾을 수 없습니다.');
 
-    const passwordCheck =
-      user && bcrypt.compareSync(currentPassword, userPassword);
+    const passwordCheck = bcrypt.compareSync(currentPassword, user.password);
     if (!passwordCheck) {
       throw new UnauthorizedError(MESSAGES.AUTH.COMMON.UNAUTHORIZED);
     }
@@ -49,7 +49,8 @@ class UserService {
       newPassword,
     );
     if (!updatedUser) throw new Error('유저를 찾을 수 없습니다.');
-    return updatedUser;
+    return;
   };
 }
+
 export default UserService;

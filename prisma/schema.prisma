@@ -155,7 +155,6 @@ model Feedback {
     schoolYear Int
     category   Category
     content    String
-    title      String   @map("title")
     createdAt  DateTime @default(now()) @map("created_at")
     updatedAt  DateTime @updatedAt @map("updated_at")
 
@@ -194,7 +193,7 @@ enum Reason {
 }
 
 enum Category {
-    Grade
+    GRADE
     BEHAVIOR
     ATTENDANCE
     ATTITUDE
