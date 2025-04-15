@@ -5,15 +5,16 @@ import StudentsRepository from '../repositories/students.repository.js';
 class StudentsService {
   studentsRepository = new StudentsRepository();
 
-  //전체 학생 목록 조회
-  getAllStudent = async (userId) => {
-    const data = await this.studentsRepository.getAllStudent(userId);
+  //반 학생 목록 조회
+  getClassStudent = async (classId) => {
+    const data = await this.studentsRepository.getClassStudent(classId);
     return data;
   };
 
   //특정 학생 상세 조회 , 유효성 검사
   getOneStudent = async (studentId) => {
     const student = await this.studentsRepository.getOneStudent(studentId);
+    console.log(student);
     if (!student) {
       throw new NotFoundError(MESSAGES.STUDENT.COMMON.NOT_FOUND);
     }

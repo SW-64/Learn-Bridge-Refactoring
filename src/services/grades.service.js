@@ -1,4 +1,4 @@
-import { NotFoundError } from '../errors/http.error.js';
+import { ConflictError, NotFoundError } from '../errors/http.error.js';
 import GradesRepository from '../repositories/grades.repository.js';
 import StudentsRepository from '../repositories/students.repository.js';
 
@@ -6,21 +6,29 @@ class GradesService {
   gradeRepository = new GradesRepository();
   studentRepository = new StudentsRepository();
   // 성적 입력
-  createGrades = async (schoolYear, semester, subject, score, studentId) => {
-    // 받아온 값 중, 하나라도 없으면 에러 반환
-    const getData = schoolYear && semester && subject && score && studentId;
-    if (!getData) throw new NotFoundError('값을 불러오지 못했습니다.');
+  createGrades = async (gradesWithStudentId) => {
+    // 유효성 검사
+    for (const item of gradesWithStudentId) {
+      const { schoolYear, semester, subject, score, studentId } = item;
+      if (!schoolYear || !semester || !subject || !score || !studentId) {
+        throw new NotFoundError('값을 불러오지 못했습니다.');
+      }
 
-    // studentId에 맞는 학생이 없을 시, 에러 반환
-    //const existedStudent =
+      const existedGrades =
+        await this.gradeRepository.getGradesByPeriodAndSubject(
+          subject,
+          studentId,
+          schoolYear,
+          semester,
+        );
 
-    const grades = await this.gradeRepository.createGrades(
-      schoolYear,
-      semester,
-      subject,
-      score,
-      studentId,
-    );
+      if (existedGrades) {
+        throw new ConflictError(
+          `이미 존재하는 성적입니다: ${subject}, ${schoolYear}, ${semester}`,
+        );
+      }
+    }
+    const grades = await this.gradeRepository.createGrades(gradesWithStudentId);
     return grades;
   };
   // 성적 조회
@@ -59,21 +67,39 @@ class GradesService {
   };
 
   // 성적 수정
-  updateGrades = async (schoolYear, semester, subject, studentId, score) => {
-    // 받아온 값 중, 하나라도 없으면 에러 반환
-    const getData = schoolYear && semester && subject && score && studentId;
-    if (!getData) throw new NotFoundError('값을 불러오지 못했습니다.');
+  updateGrades = async (gradesWithStudentId) => {
+    // 유효성 검사
+    for (const item of gradesWithStudentId) {
+      const { schoolYear, semester, subject, score, studentId } = item;
+      if (!schoolYear || !semester || !subject || !score || !studentId) {
+        throw new NotFoundError('값을 불러오지 못했습니다.');
+      }
 
-    // studentId에 맞는 학생이 없을 시, 에러 반환
-    //const existedStudent
+      const existedGrades =
+        await this.gradeRepository.getGradesByPeriodAndSubject(
+          subject,
+          studentId,
+          schoolYear,
+          semester,
+        );
 
-    const grades = await this.gradeRepository.updateGrades(
-      schoolYear,
-      semester,
-      subject,
-      studentId,
-      score,
-    );
+      if (!existedGrades) {
+        throw new NotFoundError(
+          `입력되지 않은 성적입니다.: ${subject}, ${schoolYear}, ${semester}`,
+        );
+      }
+    }
+
+    const grades = await this.gradeRepository.updateGrades(gradesWithStudentId);
+    return grades;
+  };
+
+  // 반 학생의 전체 성적 조회
+  getClassGrades = async (classId, semester) => {
+    if (!classId || !semester) {
+      throw new NotFoundError('반 ID와 학기를 입력해주세요.');
+    }
+    const grades = await this.gradeRepository.getClassGrades(classId, semester);
     return grades;
   };
 }

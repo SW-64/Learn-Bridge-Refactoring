@@ -5,8 +5,8 @@ import TeacherRepository from '../repositories/teacher.repository.js';
 import { prisma } from '../utils/prisma.utils.js';
 
 const teacherRepository = new TeacherRepository(prisma);
-const classRepository = new ClassRepository();
-const studentsRepository = new StudentsRepository();
+const classRepository = new ClassRepository(prisma);
+const studentsRepository = new StudentsRepository(prisma);
 
 export const verifyHomeroomTeacher = async (req, res, next) => {
   // 검증에 필요한 데이터 호출
@@ -14,7 +14,7 @@ export const verifyHomeroomTeacher = async (req, res, next) => {
   const { classId, studentId } = req.params;
 
   const teacherFromUser = await teacherRepository.findTeacherByUserId(user.id);
-  const classFromParam = await getClassFromParam(classId, studentId);
+  const classFromParam = await getClassFromParam(+classId, +studentId);
 
   // 데이터 유효성 검사
   if (!teacherFromUser) {

@@ -1,11 +1,22 @@
 import { prisma } from '../utils/prisma.utils.js';
 
 class StudentsRepository {
-  //전체 학생 목록 조회
-  getAllStudent = async () => {
+  //반 학생 목록 조회
+  getClassStudent = async (classId) => {
     const students = await prisma.student.findMany({
-      include: {
-        user: true,
+      where: {
+        classId,
+      },
+      select: {
+        studentId: true,
+        grade: true,
+        number: true,
+        gradeClass: true,
+        user: {
+          select: {
+            name: true,
+          },
+        },
       },
     });
     return students;
@@ -13,13 +24,24 @@ class StudentsRepository {
 
   //특정 학생 상세 조회
   getOneStudent = async (studentId) => {
+    console.log(studentId);
     const student = await prisma.student.findUnique({
       where: {
         studentId: studentId,
       },
-
-      include: {
-        user: true,
+      select: {
+        studentId: true,
+        grade: true,
+        number: true,
+        gradeClass: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            photo: true,
+          },
+        },
       },
     });
     return student;
@@ -60,10 +82,24 @@ class StudentsRepository {
           contains: name,
         },
       },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        student: {
+          select: {
+            grade: true,
+            number: true,
+            gradeClass: true,
+          },
+        },
+      },
       // include: {
       //   user: true,
       // },
     });
+    student.password = undefined;
+
     return student;
   };
 }

@@ -5,6 +5,7 @@ import GradesController from '../controllers/grades.controller.js';
 import { prisma } from '../utils/prisma.utils.js';
 import { requireAccessToken } from '../middlewares/require-access-token.middleware.js';
 import { verifySchoolUser } from '../middlewares/verify-school-user.middleware.js';
+import { verifyHomeroomTeacher } from '../middlewares/verify-homeroom-teacher-middleware.js';
 
 const gradesRouter = express.Router({ mergeParams: true });
 const gradesRepository = new GradesRepository(prisma);
@@ -33,5 +34,14 @@ gradesRouter.patch(
   requireAccessToken('TEACHER'),
   verifySchoolUser,
   gradesController.updateGrades,
+);
+
+// 반 학생의 전체 성적 조회
+gradesRouter.get(
+  '/class/:classId',
+  requireAccessToken('TEACHER'),
+  verifySchoolUser,
+  verifyHomeroomTeacher,
+  gradesController.getClassGrades,
 );
 export { gradesRouter };
