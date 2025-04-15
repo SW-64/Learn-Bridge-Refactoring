@@ -40,7 +40,7 @@ class AuthService {
       throw new ConflictError(MESSAGES.AUTH.COMMON.EMAIL.DUPLICATED);
     }
 
-    // 비밀번호와 비밀번호 확인이 맞지않다면 에러 반환
+    //비밀번호와 비밀번호 확인이 맞지않다면 에러 반환
     if (password !== passwordCheck) {
       throw new ConflictError(
         MESSAGES.AUTH.COMMON.PASSWORD_CHECK.NOT_MATCHTED_WITH_PASSWORD,
