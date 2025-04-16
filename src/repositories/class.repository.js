@@ -10,6 +10,15 @@ class ClassRepository {
     });
     return data;
   };
+
+  findClassByTeacherId = async (teacherId) => {
+    const data = await prisma.class.findFirst({
+      where: {
+        teacherId,
+      },
+    });
+    return data;
+  };
 }
 
 export default ClassRepository;

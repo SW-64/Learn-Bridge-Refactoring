@@ -32,6 +32,7 @@ class UserRepository {
       where: { id: userId },
       select: {
         name: true,
+        role: true,
         ...(userRole === 'TEACHER' && {
           teacher: {
             select: {
