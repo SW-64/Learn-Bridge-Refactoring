@@ -2,10 +2,13 @@ import { prisma } from '../utils/prisma.utils.js';
 
 class StudentsRepository {
   //반 학생 목록 조회
-  getClassStudent = async (classId) => {
+  getClassStudent = async (classId, schoolId) => {
     const students = await prisma.student.findMany({
       where: {
         classId,
+        user: {
+          schoolId,
+        },
       },
       select: {
         studentId: true,
@@ -15,6 +18,7 @@ class StudentsRepository {
         user: {
           select: {
             name: true,
+            schoolId: true,
           },
         },
       },
@@ -74,13 +78,14 @@ class StudentsRepository {
   };
 
   // 특정 학생 정보 검색
-  searchStudent = async (name) => {
+  searchStudent = async (name, schoolId) => {
     const student = await prisma.user.findMany({
       where: {
         role: 'STUDENT',
         name: {
           contains: name,
         },
+        schoolId
       },
       select: {
         id: true,
