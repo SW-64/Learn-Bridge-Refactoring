@@ -15,11 +15,13 @@ import {
 import { MESSAGES } from '../constants/message.constant.js';
 import SchoolRepository from '../repositories/school.repository.js';
 import UserRepository from '../repositories/user.repository.js';
+import ClassRepository from '../repositories/class.repository.js';
 
 class AuthService {
   authRepository = new AuthRepository();
   schoolRepository = new SchoolRepository();
   userRepository = new UserRepository();
+  classRepository = new ClassRepository();
 
   signUp = async ({
     email,
@@ -94,7 +96,7 @@ class AuthService {
 
   signIn = async ({ email, password }) => {
     const user = await this.authRepository.findUserByEmail(email);
-
+    console.log(user);
     const passwordCheck = user && bcrypt.compareSync(password, user.password);
 
     if (!passwordCheck) {
@@ -106,7 +108,19 @@ class AuthService {
     // accessToken, refreshToken 생성
     const data = await this.generateAuthTokens(payload);
 
-    return data;
+    // 담임일 경우 classId 반환
+    const teacherId = user.role === 'TEACHER' ? user.teacher.teacherId : null;
+    const classData = teacherId
+      ? await this.classRepository.findClassByTeacherId(teacherId)
+      : null;
+    const classId = classData ? classData.classId : null;
+
+    const tokenWithClassId = {
+      ...data,
+      classId,
+    };
+
+    return tokenWithClassId;
   };
 
   signOut = async (user) => {
@@ -125,6 +139,7 @@ class AuthService {
   //토큰 발급 함수
   generateAuthTokens = async (payload) => {
     const userId = payload.id;
+    const schoolId = payload.schoolId;
 
     const accessToken = jwt.sign(payload, ACCESS_TOKEN_SECRET, {
       expiresIn: authConstant.ACCESS_TOKEN_EXPIRED_IN,
@@ -135,7 +150,7 @@ class AuthService {
 
     await this.authRepository.upsertRefreshToken(userId, refreshToken);
 
-    return { accessToken, refreshToken };
+    return { accessToken, refreshToken, schoolId };
   };
 }
 

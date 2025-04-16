@@ -63,7 +63,16 @@ class AuthRepository {
 
   // 이메일로 유저 찾기
   findUserByEmail = async (email) => {
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({
+      where: { email },
+      include: {
+        teacher: {
+          select: {
+            teacherId: true,
+          },
+        },
+      },
+    });
     return user;
   };
 
