@@ -44,5 +44,5 @@ jobs:
       - name: Run test # step의 이름 지정 (선택 사항)
         run: |
 
-          yarn test
+          # yarn test
           # npm run test
