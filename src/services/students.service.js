@@ -49,8 +49,8 @@ class StudentsService {
   };
 
   // 특정 학생 정보 검색
-  searchStudent = async (name) => {
-    const student = await this.studentsRepository.searchStudent(name);
+  searchStudent = async (name, schoolId) => {
+    const student = await this.studentsRepository.searchStudent(name, schoolId);
     if (!student) {
       throw new NotFoundError(MESSAGES.STUDENT.COMMON.NOT_FOUND);
     }

@@ -74,13 +74,14 @@ class StudentsRepository {
   };
 
   // 특정 학생 정보 검색
-  searchStudent = async (name) => {
+  searchStudent = async (name, schoolId) => {
     const student = await prisma.user.findMany({
       where: {
         role: 'STUDENT',
         name: {
           contains: name,
         },
+        schoolId
       },
       select: {
         id: true,

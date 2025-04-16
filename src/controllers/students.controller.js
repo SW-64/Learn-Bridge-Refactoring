@@ -81,8 +81,8 @@ class StudentsController {
   searchStudent = async (req, res, next) => {
     try {
       const { name } = req.query;
-
-      const data = await this.studentsService.searchStudent(name);
+      const { schoolId } = req.params;
+      const data = await this.studentsService.searchStudent(name, +schoolId);
       return res.status(HTTP_STATUS.OK).json({
         status: HTTP_STATUS.OK,
         message: '학생 상세정보 검색 성공',
