@@ -6,8 +6,8 @@ class StudentsService {
   studentsRepository = new StudentsRepository();
 
   //반 학생 목록 조회
-  getClassStudent = async (classId) => {
-    const data = await this.studentsRepository.getClassStudent(classId);
+  getClassStudent = async (classId, schoolId) => {
+    const data = await this.studentsRepository.getClassStudent(classId, schoolId);
     return data;
   };
 

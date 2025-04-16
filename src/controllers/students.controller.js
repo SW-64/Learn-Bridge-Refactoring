@@ -8,9 +8,9 @@ class StudentsController {
   //반 학생 목록 조회
   getClassStudent = async (req, res, next) => {
     try {
-      const { classId } = req.params;
+      const { classId, schoolId } = req.params;
 
-      const data = await this.studentsService.getClassStudent(+classId); // + => 타입을 숫자로 강제 변환
+      const data = await this.studentsService.getClassStudent(+classId, +schoolId); // + => 타입을 숫자로 강제 변환
 
       return res.status(HTTP_STATUS.OK).json({
         status: HTTP_STATUS.OK,
