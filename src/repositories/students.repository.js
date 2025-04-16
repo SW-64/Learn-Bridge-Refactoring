@@ -18,6 +18,7 @@ class StudentsRepository {
         user: {
           select: {
             name: true,
+            schoolId: true,
           },
         },
       },
