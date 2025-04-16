@@ -24,7 +24,7 @@ app.use(globalErrorHandler); // 미들웨어 중, 에러처리 미들웨어는 �
 
 // Test Routing
 app.get('/', (req, res) => {
-  return res.json('hello world CICD test 2 ');
+  return res.json('hello world CICD test 3 ');
 });
 
 app.listen(port, () => {
