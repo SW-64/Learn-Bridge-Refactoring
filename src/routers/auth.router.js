@@ -22,4 +22,20 @@ authRouter.post('/sign-out', requireRefreshToken, authController.signOut);
 // 토큰 재발급
 authRouter.post('/token', requireRefreshToken, authController.Token);
 
+// 카카오 로그인 시도
+authRouter.get('/kakao',
+    passport.authenticate('kakao', {
+    session: false,
+    authType: 'reprompt',
+  }), 
+  authController.kakaoLogin);
+
+// 카카오 로그인 정보 반환
+authRouter.get('/kakao/callback',
+    passport.authenticate('kakao', {
+        session: false,
+      }), 
+    authController.kakaoCallback);
+
+
 export { authRouter };
