@@ -5,6 +5,8 @@ import AuthService from '../services/auth.service.js';
 import AuthController from '../controllers/auth.controller.js';
 import { requireRefreshToken } from '../middlewares/require-refresh-token.middleware.js';
 import { requireAccessToken } from '../middlewares/require-access-token.middleware.js';
+import passport from 'passport';
+import '../strategies/kakao.strategy.js';
 
 const authRouter = express.Router();
 const authRepository = new AuthRepository(prisma);

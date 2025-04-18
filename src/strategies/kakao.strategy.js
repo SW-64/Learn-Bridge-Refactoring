@@ -6,7 +6,7 @@ import {
   KAKAO_CLIENT_SECRET,
   KAKAO_CLIENT_ID,
   KAKAO_CALLBACK_URL,
-} from './../constants/env.constant';
+} from '../constants/env.constant.js';
 
 const authService = new AuthService();
 passport.use(
@@ -18,6 +18,7 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
+        console.log('Kakao profile:', profile);
         const existedUser = await prisma.user.findUnique({
           where: { email: profile._json.kakao_account.email },
         });
