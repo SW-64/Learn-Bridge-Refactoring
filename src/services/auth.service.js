@@ -36,6 +36,11 @@ class AuthService {
     gradeClass,
     schoolName,
   }) => {
+    // 필요한 값을 받지 못할 때 에러 반환
+    if (!email || !name || !role || !password) {
+      throw new BadRequestError(MESSAGES.AUTH.SIGN_UP.NOT_ENOUGH_DATA);
+    }
+
     // 이메일이 이미 존재한다면 에러 반환
     const existedUser = await this.authRepository.findUserByEmail(email);
     if (existedUser) {

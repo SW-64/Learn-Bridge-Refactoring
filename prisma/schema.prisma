@@ -18,9 +18,9 @@ model User {
     id           Int           @id @default(autoincrement())
     schoolId     Int           @map("school_id")
     name         String
-    role         UserRole
+    role         UserRole?
     email        String        @unique
-    password     String
+    password     String?
     photo        String?
     createdAt    DateTime      @default(now()) @map("created_at")
     updatedAt    DateTime      @updatedAt @map("updated_at")

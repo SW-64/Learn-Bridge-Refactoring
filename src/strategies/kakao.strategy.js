@@ -45,6 +45,7 @@ passport.use(
               email: profile._json.kakao_account.email,
               name: profile._json.properties.nickname,
               role: null,
+              schoolId: 1, // 임시 학교
             },
           });
 
@@ -53,15 +54,15 @@ passport.use(
           });
 
           const userData = {
-            id: existedUser.id,
-            email: existedUser.email,
-            schoolId: existedUser.schoolId,
-            photo: existedUser.photo,
-            name: existedUser.name,
-            role: existedUser.role,
+            id: user.id,
+            email: user.email,
+            schoolId: user.schoolId,
+            photo: user.photo,
+            name: user.name,
+            role: user.role,
             token,
-            createdAt: existedUser.createdAt,
-            updatedAt: existedUser.updatedAt,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
           };
           // 프론트에서 해당 응답을 보고 추가정보 입력 페이지로 이동하도록 처리
           if (!user.role) {
