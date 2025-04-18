@@ -85,14 +85,14 @@ class StudentsRepository {
         name: {
           contains: name,
         },
-        schoolId
+        schoolId,
       },
       select: {
-        id: true,
         name: true,
         email: true,
         student: {
           select: {
+            studentId: true,
             grade: true,
             number: true,
             gradeClass: true,

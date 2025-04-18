@@ -13,7 +13,7 @@ class FeedbackController {
 
       const feedback = await this.feedbackService.createFeedback(
         +studentId,
-        content,
+        content.feedbacks,
         +schoolYear,
       );
 
@@ -36,7 +36,7 @@ class FeedbackController {
 
       const feedback = await this.feedbackService.updateFeedback(
         +studentId,
-        content,
+        content.feedbacks,
         +schoolYear,
       );
 
