@@ -140,6 +140,7 @@ model Consultation {
     nextPlan       DateTime
     title          String
     subject        String
+    author         String   @default("Unknown")
     createdAt      DateTime @default(now()) @map("created_at")
     updatedAt      DateTime @updatedAt @map("updated_at")
 
