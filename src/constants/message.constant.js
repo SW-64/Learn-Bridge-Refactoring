@@ -52,5 +52,10 @@ export const MESSAGES = {
     TOKEN: {
       SUCCEED: '토큰 재발급에 성공했습니다.',
     },
+    KAKAO: {
+      SUCCEED: '카카오 로그인에 성공했습니다.',
+      INVALID: '카카오 로그인에 실패했습니다.',
+      NO_USER: '가입되지 않은 이메일입니다.',
+    },
   },
 };

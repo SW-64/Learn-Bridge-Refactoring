@@ -131,6 +131,70 @@ class AuthRepository {
 
     return userId;
   };
+
+  // 카카오 로그인 추가 정보 입력
+  addKakaoInfo = async (
+    userId,
+    name,
+    role,
+    subject,
+    grade,
+    gradeClass,
+    number,
+    schoolId,
+    classId,
+  ) => {
+    const userData = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        name,
+        role,
+        schoolId,
+      },
+    });
+    // create: {
+    //   ...(role === 'TEACHER' && {
+    //     // 선생님일 경우 teacher 테이블 생성
+    //     teacher: {
+    //       create: {
+    //         subject,
+    //       },
+    //     },
+    //   }),
+    //   ...(role === 'STUDENT' && {
+    //     // 학생일 경우 student 테이블 생성
+    //     student: {
+    //       create: {
+    //         grade,
+    //         number,
+    //         gradeClass,
+    //         // 학생 테이블과 반 테이블 연결
+    //         classId,
+    //       },
+    //     },
+    //   }),
+    // },
+    if (role === 'TEACHER') {
+      await prisma.teacher.create({
+        data: {
+          userId,
+          subject,
+        },
+      });
+    } else if (role === 'STUDENT') {
+      await prisma.student.create({
+        data: {
+          userId,
+          grade,
+          number,
+          gradeClass,
+          classId,
+        },
+      });
+    }
+
+    return userData;
+  };
 }
 
 export default AuthRepository;
