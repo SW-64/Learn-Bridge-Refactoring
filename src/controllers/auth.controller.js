@@ -98,12 +98,12 @@ class AuthController {
   // 카카오 로그인 정보 반환
   kakaoSignIn = async (req, res, next) => {
     try {
-      const { user } = req.user;
-      console.log('user', req.user);
+      const user = req.user;
+      console.log(user);
       return res.status(HTTP_STATUS.OK).json({
         status: HTTP_STATUS.OK,
-        message: MESSAGES.AUTH.SOCIAL.KAKAKO.SUCCEED,
-        user: req.user,
+        message: MESSAGES.AUTH.KAKAO.SUCCEED,
+        data: user,
       });
     } catch (error) {
       next(error);
@@ -113,13 +113,23 @@ class AuthController {
   addKakaoInfo = async (req, res, next) => {
     try {
       const userId = req.user.id;
-      const { role, subject } = req.body;
+      const { name, role, subject, grade, gradeClass, number, schoolName } =
+        req.body;
 
-      const data = await this.authService.addKakaoInfo(userId, role, subject);
+      const data = await this.authService.addKakaoInfo(
+        userId,
+        name,
+        role,
+        subject,
+        grade,
+        gradeClass,
+        number,
+        schoolName,
+      );
 
       return res.status(HTTP_STATUS.OK).json({
         status: HTTP_STATUS.OK,
-        message: MESSAGES.AUTH.SOCIAL.KAKAKO.MORE_INFO,
+        message: 'MESSAGES.AUTH.SOCIAL.KAKAKO.MORE_INFO',
         data,
       });
     } catch (error) {

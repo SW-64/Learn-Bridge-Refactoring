@@ -136,7 +136,7 @@ class AuthService {
   };
 
   token = async (user) => {
-    const payload = { id: user.id, role: user.role };
+    const payload = { id: user.id, role: user.role, schoolId: user.schoolId };
     const data = await this.generateAuthTokens(payload);
 
     return data;
@@ -157,6 +157,63 @@ class AuthService {
     await this.authRepository.upsertRefreshToken(userId, refreshToken);
 
     return { accessToken, refreshToken, schoolId };
+  };
+
+  // 카카오 로그인 추가 정보 입력
+  addKakaoInfo = async (
+    userId,
+    name,
+    role,
+    subject,
+    grade,
+    gradeClass,
+    number,
+    schoolName,
+  ) => {
+    // 유효성 검사
+    const requiredData = !!(userId && role && schoolName && name);
+    const optionalData = !!(subject || grade || gradeClass || number);
+    if (!requiredData || !optionalData) {
+      throw new BadRequestError(MESSAGES.AUTH.SIGN_UP.NOT_ENOUGH_DATA);
+    }
+
+    if (role == 'STUDENT' && subject) {
+      throw new BadRequestError(MESSAGES.AUTH.SIGN_UP.STUDENT_INVALID);
+    }
+
+    if (role == 'TEACHER' && (grade || number || gradeClass)) {
+      throw new BadRequestError(MESSAGES.AUTH.SIGN_UP.TEACHER_INVALID);
+    }
+
+    const existedSchool =
+      await this.schoolRepository.findSchoolBySchoolName(schoolName);
+    if (!existedSchool) throw new NotFoundError('해당되는 학교가 없습니다.');
+
+    const school = existedSchool[0];
+    const schoolId = school.schoolId;
+
+    // 반 데이터에서 id 가져오기
+    const classId =
+      role === 'STUDENT'
+        ? ((await this.userRepository.findClass(grade, gradeClass))?.classId ??
+          (() => {
+            throw new NotFoundError('해당 반이 존재하지 않습니다.');
+          })())
+        : null;
+
+    const data = await this.authRepository.addKakaoInfo(
+      userId,
+      name,
+      role,
+      subject,
+      grade,
+      gradeClass,
+      number,
+      schoolId,
+      classId,
+    );
+
+    return data;
   };
 }
 
