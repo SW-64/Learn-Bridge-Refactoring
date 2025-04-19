@@ -53,6 +53,8 @@ jobs:
             echo "KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}" >> .env
             echo "KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}" >> .env
             echo "KAKAO_CALLBACK_URI=${{ secrets.KAKAO_CALLBACK_URI }}" >> .env
+            echo "ACCESS_TOKEN_EXPIRED_IN=${{ secrets.ACCESS_TOKEN_EXPIRED_IN }}" >> .env
+            echo "REFRESH_TOKEN_EXPIRED_IN=${{ secrets.REFRESH_TOKEN_EXPIRED_IN }}" >> .env
 
             # 의존성 설치
             yarn --frozen-lockfile

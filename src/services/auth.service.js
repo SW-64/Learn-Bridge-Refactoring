@@ -7,8 +7,9 @@ import {
   BadRequestError,
   NotFoundError,
 } from '../errors/http.error.js';
-import { authConstant } from '../constants/auth.constant.js';
 import {
+  ACCESS_TOKEN_EXPIRED_IN,
+  REFRESH_TOKEN_EXPIRED_IN,
   ACCESS_TOKEN_SECRET,
   REFRESH_TOKEN_SECRET,
 } from '../constants/env.constant.js';
@@ -147,10 +148,10 @@ class AuthService {
     const schoolId = payload.schoolId;
 
     const accessToken = jwt.sign(payload, ACCESS_TOKEN_SECRET, {
-      expiresIn: authConstant.ACCESS_TOKEN_EXPIRED_IN,
+      expiresIn: ACCESS_TOKEN_EXPIRED_IN,
     });
     const refreshToken = jwt.sign(payload, REFRESH_TOKEN_SECRET, {
-      expiresIn: authConstant.REFRESH_TOKEN_EXPIRED_IN,
+      expiresIn: REFRESH_TOKEN_EXPIRED_IN,
     });
 
     await this.authRepository.upsertRefreshToken(userId, refreshToken);
