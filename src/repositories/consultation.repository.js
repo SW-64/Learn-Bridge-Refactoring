@@ -57,12 +57,24 @@ class ConsultationRepository {
     return data;
   };
 
+  // 상담 기록 조회
+  getConsultationContent = async ({ studentId, consultationId }) => {
+    const data = await prisma.consultation.findUnique({
+      where: {
+        studentId,
+        consultationId: consultationId,
+      },
+    });
+    return data;
+  };
+
   // 상담 기록 입력
   create = async ({
     title,
     content,
     date,
     nextPlan,
+    isPublicToSubject,
     subject,
     author,
     studentId,
@@ -74,6 +86,7 @@ class ConsultationRepository {
         content,
         date,
         nextPlan,
+        isPublicToSubject,
         subject,
         author,
         // 상담테이블을 학생 테이블과 선생 테이블에 연결 (현재로썬 connect만 동작함)
@@ -88,33 +101,33 @@ class ConsultationRepository {
     return data;
   };
 
-  // 상담 내용 수정
-  update = async ({
-    title,
-    content,
-    date,
-    nextPlan,
-    studentId,
-    consultationId,
-    teacherId,
-  }) => {
-    const data = await prisma.consultation.update({
-      // 내가 찾는 상담 기록이 맞는지 확인
-      where: {
-        studentId: studentId,
-        consultationId: consultationId,
-        teacherId: teacherId,
-      },
-      // 수정할 데이터
-      data: {
-        title: title,
-        content: content,
-        date: date,
-        nextPlan: nextPlan,
-      },
-    });
-    return data;
-  };
+  // // 상담 내용 수정
+  // update = async ({
+  //   title,
+  //   content,
+  //   date,
+  //   nextPlan,
+  //   studentId,
+  //   consultationId,
+  //   teacherId,
+  // }) => {
+  //   const data = await prisma.consultation.update({
+  //     // 내가 찾는 상담 기록이 맞는지 확인
+  //     where: {
+  //       studentId: studentId,
+  //       consultationId: consultationId,
+  //       teacherId: teacherId,
+  //     },
+  //     // 수정할 데이터
+  //     data: {
+  //       title: title,
+  //       content: content,
+  //       date: date,
+  //       nextPlan: nextPlan,
+  //     },
+  //   });
+  //   return data;
+  // };
 }
 
 export default ConsultationRepository;

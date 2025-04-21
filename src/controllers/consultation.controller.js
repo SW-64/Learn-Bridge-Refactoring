@@ -47,6 +47,26 @@ class ConsultationController {
     }
   };
 
+  //상담 기록 조회
+  getConsultationContent = async (req, res, next) => {
+    try {
+      // Id 가져오기
+      const { studentId, consultationId } = req.params;
+
+      const data = await this.consultationService.getConsultationContent(
+        +studentId,
+        +consultationId,
+      );
+      return res.status(HTTP_STATUS.OK).json({
+        status: HTTP_STATUS.OK,
+        message: '상담 기록 조회 완료',
+        data,
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+
   //상담 기록 입력
   createConsultation = async (req, res, next) => {
     try {
@@ -54,14 +74,15 @@ class ConsultationController {
       const { studentId } = req.params;
       const userId = req.user.id;
 
-      // 제목, 내용, 날짜, 예정일 값 받기
-      const { title, content, date, nextPlan } = req.body;
+      // 제목, 내용, 날짜, 예정일 값 받기 + 동일과목공개여부
+      const { title, content, date, nextPlan, isPublicToSubject } = req.body;
 
       const data = await this.consultationService.createConsultation(
         title,
         content,
         date,
         nextPlan,
+        isPublicToSubject,
         +studentId,
         userId,
       );
@@ -75,34 +96,34 @@ class ConsultationController {
     }
   };
 
-  // 상담 내용 수정
-  updateConsultation = async (req, res, next) => {
-    try {
-      // Id 가져오기
-      const { studentId, consultationId } = req.params;
-      const userId = req.user.id;
+  // // 상담 내용 수정
+  // updateConsultation = async (req, res, next) => {
+  //   try {
+  //     // Id 가져오기
+  //     const { studentId, consultationId } = req.params;
+  //     const userId = req.user.id;
 
-      // 수정된 제목, 내용, 날짜, 예정일 값 받기
-      const { title, content, date, nextPlan } = req.body;
+  //     // 수정된 제목, 내용, 날짜, 예정일 값 받기
+  //     const { title, content, date, nextPlan } = req.body;
 
-      const data = await this.consultationService.updateConsultation(
-        title,
-        content,
-        date,
-        nextPlan,
-        +studentId,
-        +consultationId,
-        userId,
-      );
-      return res.status(HTTP_STATUS.OK).json({
-        status: HTTP_STATUS.OK,
-        message: '상담 수정 완료',
-        data,
-      });
-    } catch (err) {
-      next(err);
-    }
-  };
+  //     const data = await this.consultationService.updateConsultation(
+  //       title,
+  //       content,
+  //       date,
+  //       nextPlan,
+  //       +studentId,
+  //       +consultationId,
+  //       userId,
+  //     );
+  //     return res.status(HTTP_STATUS.OK).json({
+  //       status: HTTP_STATUS.OK,
+  //       message: '상담 수정 완료',
+  //       data,
+  //     });
+  //   } catch (err) {
+  //     next(err);
+  //   }
+  // };
 }
 
 export default ConsultationController;

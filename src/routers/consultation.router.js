@@ -25,6 +25,13 @@ consultationRouter.get(
   consultationController.getConsultation,
 );
 
+// 상담 기록 조회
+consultationRouter.get(
+  '/:consultationId/students/:studentId',
+  requireAccessToken('TEACHER'),
+  consultationController.getConsultationContent,
+);
+
 // 상담 기록 입력
 consultationRouter.post(
   '/students/:studentId',
@@ -32,11 +39,11 @@ consultationRouter.post(
   consultationController.createConsultation,
 );
 
-// 상담 내용 수정
-consultationRouter.patch(
-  '/:consultationId/students/:studentId',
-  requireAccessToken('TEACHER'),
-  consultationController.updateConsultation,
-);
+// // 상담 내용 수정
+// consultationRouter.patch(
+//   '/:consultationId/students/:studentId',
+//   requireAccessToken('TEACHER'),
+//   consultationController.updateConsultation,
+// );
 
 export { consultationRouter };

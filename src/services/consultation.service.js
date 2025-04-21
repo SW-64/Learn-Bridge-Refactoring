@@ -51,12 +51,22 @@ class ConsultationService {
     }
   };
 
+  //상담 기록 조회
+  getConsultationContent = async (studentId, consultationId) => {
+    const data = await this.consultationRepository.getConsultationContent({
+      studentId,
+      consultationId,
+    });
+    return data;
+  };
+
   //상담 기록 입력
   createConsultation = async (
     title,
     content,
     date,
     nextPlan,
+    isPublicToSubject,
     studentId,
     userId,
   ) => {
@@ -71,6 +81,7 @@ class ConsultationService {
       content,
       date,
       nextPlan,
+      isPublicToSubject,
       studentId,
       subject,
       author,
@@ -79,34 +90,34 @@ class ConsultationService {
     return data;
   };
 
-  // 상담 내용 수정
-  updateConsultation = async (
-    title,
-    content,
-    date,
-    nextPlan,
-    studentId,
-    consultationId,
-    userId,
-  ) => {
-    const teacher = await this.teacherRepository.findTeacherByUserId(userId);
-    const teacherName = teacher.user.name;
-    const teacherId = teacher.teacherId;
+  // // 상담 내용 수정
+  // updateConsultation = async (
+  //   title,
+  //   content,
+  //   date,
+  //   nextPlan,
+  //   studentId,
+  //   consultationId,
+  //   userId,
+  // ) => {
+  //   const teacher = await this.teacherRepository.findTeacherByUserId(userId);
+  //   const teacherName = teacher.user.name;
+  //   const teacherId = teacher.teacherId;
 
-    const data = await this.consultationRepository.update({
-      title,
-      content,
-      date,
-      nextPlan,
-      studentId,
-      consultationId,
-      teacherId,
-    });
-    return {
-      ...data,
-      teacherName,
-    };
-  };
+  //   const data = await this.consultationRepository.update({
+  //     title,
+  //     content,
+  //     date,
+  //     nextPlan,
+  //     studentId,
+  //     consultationId,
+  //     teacherId,
+  //   });
+  //   return {
+  //     ...data,
+  //     teacherName,
+  //   };
+  // };
 }
 
 export default ConsultationService;
