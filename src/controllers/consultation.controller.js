@@ -1,5 +1,6 @@
 import { HTTP_STATUS } from '../constants/http-status.constant.js';
 import ConsultationService from '../services/consultation.service.js';
+import { BadRequestError } from '../errors/http.error.js';
 
 class ConsultationController {
   consultationService = new ConsultationService();
@@ -76,6 +77,16 @@ class ConsultationController {
 
       // 제목, 내용, 날짜, 예정일 값 받기 + 동일과목공개여부
       const { title, content, date, nextPlan, isPublicToSubject } = req.body;
+
+      // 잘못된 날짜 형식을 받는다면 에러 반환 (+null도)
+      const isValidDate = (value) => {
+        const data = new Date(value);
+        return !isNaN(data.getTime()); // 잘못된 날짜를 받는다면 NAN이 나옴
+      };
+
+      if (!isValidDate(date) || !isValidDate(nextPlan)) {
+        throw new BadRequestError('잘못된 날짜 형식입니다.');
+      }
 
       const data = await this.consultationService.createConsultation(
         title,

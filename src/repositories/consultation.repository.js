@@ -101,6 +101,18 @@ class ConsultationRepository {
     return data;
   };
 
+  //유효성 검사를 위한 상담글 찾기
+  findExistedConsultation = async (studentId, title, date) => {
+    const data = await prisma.consultation.findFirst({
+      where: {
+        studentId,
+        title,
+        date: new Date(date),
+      },
+    });
+    return data;
+  };
+
   // // 상담 내용 수정
   // update = async ({
   //   title,
