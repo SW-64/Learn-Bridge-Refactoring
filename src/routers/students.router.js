@@ -29,13 +29,13 @@ studentsRouter.get(
   studentsController.getOneStudent,
 );
 
-// 특정 학생 정보 수정
-// studentsRouter.patch(
-//   '/:studentId',
-//   requireAccessToken('TEACHER'),
-//   verifySchoolUser,
-//   studentsController.updateOneStudent,
-// );
+//특정 학생 정보 수정
+studentsRouter.patch(
+  '/students/:studentId',
+  requireAccessToken('TEACHER'),
+  verifySchoolUser,
+  studentsController.updateOneStudent,
+);
 
 // 특정 학생 정보 삭제
 // studentsRouter.delete(

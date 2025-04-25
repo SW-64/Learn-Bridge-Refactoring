@@ -7,7 +7,10 @@ class StudentsService {
 
   //반 학생 목록 조회
   getClassStudent = async (classId, schoolId) => {
-    const data = await this.studentsRepository.getClassStudent(classId, schoolId);
+    const data = await this.studentsRepository.getClassStudent(
+      classId,
+      schoolId,
+    );
     return data;
   };
 
@@ -22,7 +25,7 @@ class StudentsService {
   };
 
   //특정 학생 정보 수정
-  updateOneStudent = async (studentId, updateData) => {
+  updateOneStudent = async (studentId, name, grade, gradeClass, number) => {
     //유효성 검사 추가
     const student = await this.studentsRepository.getOneStudent(studentId);
     if (!student) {
@@ -31,7 +34,10 @@ class StudentsService {
 
     const data = await this.studentsRepository.updateOneStudent(
       studentId,
-      updateData,
+      name,
+      grade,
+      gradeClass,
+      number,
     );
     return data;
   };

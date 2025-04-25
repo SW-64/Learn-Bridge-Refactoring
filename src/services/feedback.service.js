@@ -2,7 +2,7 @@ import { BadRequestError, NotFoundError } from '../errors/http.error.js';
 import FeedbackRepository from '../repositories/feedback.repository.js';
 import StudentsRepository from '../repositories/students.repository.js';
 import TeacherRepository from '../repositories/teacher.repository.js';
-import { FEEDBACK_CATEGORY } from './../constants/feedback-category.constant.js';
+import { FEEDBACK_CATEGORY } from '../constants/enum.constant.js';
 
 class FeedbackService {
   feedbackRepository = new FeedbackRepository();

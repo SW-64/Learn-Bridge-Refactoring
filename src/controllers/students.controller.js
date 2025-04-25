@@ -10,7 +10,10 @@ class StudentsController {
     try {
       const { classId, schoolId } = req.params;
 
-      const data = await this.studentsService.getClassStudent(+classId, +schoolId); // + => 타입을 숫자로 강제 변환
+      const data = await this.studentsService.getClassStudent(
+        +classId,
+        +schoolId,
+      ); // + => 타입을 숫자로 강제 변환
 
       return res.status(HTTP_STATUS.OK).json({
         status: HTTP_STATUS.OK,
@@ -42,12 +45,15 @@ class StudentsController {
   //특정 학생 정보 수정
   updateOneStudent = async (req, res, next) => {
     try {
-      const { studentId } = req.params; //id와 수정정보를를 받음
-      const updateData = req.body;
+      const { studentId } = req.params;
+      const { name, grade, gradeClass, number } = req.body;
 
       const data = await this.studentsService.updateOneStudent(
         +studentId,
-        updateData,
+        name,
+        grade,
+        gradeClass,
+        number,
       ); //받은 값들을 매개변수로 연결
 
       return res.status(HTTP_STATUS.OK).json({
