@@ -74,9 +74,9 @@ class GradesRepository {
     const data = await prisma.grade.findMany({
       where: {
         semester,
-        // student: {
-        //   classId,
-        // },
+        student: {
+          classId,
+        },
       },
       select: {
         subject: true,
