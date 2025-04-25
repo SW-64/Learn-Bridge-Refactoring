@@ -35,4 +35,12 @@ feedbackRouter.get(
   feedbackController.getFeedback,
 );
 
+// 피드백 조회 ( 학생 / 학부모 )
+feedbackRouter.get(
+  '/me',
+  requireAccessToken('STUDENT'),
+  verifySchoolUser,
+  feedbackController.getMyFeedback,
+);
+
 export { feedbackRouter };

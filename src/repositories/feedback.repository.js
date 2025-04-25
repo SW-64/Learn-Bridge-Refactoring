@@ -62,6 +62,23 @@ class FeedbackRepository {
     });
     return feedback;
   };
+
+  // 피드백 조회 ( 학생 / 학부모 )
+  getMyFeedback = async (studentId, schoolYear) => {
+    const feedback = await prisma.feedback.findMany({
+      where: {
+        studentId,
+        schoolYear,
+      },
+      select: {
+        schoolYear: true,
+        category: true,
+        content: true,
+        updatedAt: true,
+      },
+    });
+    return feedback;
+  };
 }
 
 export default FeedbackRepository;

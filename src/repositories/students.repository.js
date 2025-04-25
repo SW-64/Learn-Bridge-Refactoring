@@ -122,6 +122,27 @@ class StudentsRepository {
     });
     return student;
   };
+
+  // 유저 ID로 학생 찾기
+  getStudentByUserId = async (userId) => {
+    const student = await prisma.student.findUnique({
+      where: { userId },
+      select: {
+        studentId: true,
+        grade: true,
+        number: true,
+        gradeClass: true,
+        user: {
+          select: {
+            name: true,
+            email: true,
+            photo: true,
+          },
+        },
+      },
+    });
+    return student;
+  };
 }
 
 export default StudentsRepository;
