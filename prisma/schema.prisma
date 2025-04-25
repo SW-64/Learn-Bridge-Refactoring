@@ -76,20 +76,32 @@ model Parents {
 }
 
 model StudentRecord {
-    studentRecordId Int            @id @default(autoincrement()) @map("student_record_id")
-    studentId       Int            @map("student_id")
+    studentRecordId Int      @id @default(autoincrement()) @map("student_record_id")
+    studentId       Int      @map("student_id")
     grade           Int
     semester        Int
     extraInfo       String?
-    attendanceType  AttendanceType
-    reason          Reason?
+    createdAt       DateTime @default(now()) @map("created_at")
+    updatedAt       DateTime @updatedAt @map("updated_at")
+
+    student    Student      @relation(fields: [studentId], references: [studentId])
+    Attendance Attendance[]
+
+    @@map("student_record")
+}
+
+model Attendance {
+    attendanceId    Int            @id @default(autoincrement()) @map("attendance_id")
+    studentRecordId Int            @map("student_record_id")
     date            DateTime
+    type            AttendanceType
+    reason          Reason?
     createdAt       DateTime       @default(now()) @map("created_at")
     updatedAt       DateTime       @updatedAt @map("updated_at")
 
-    student Student @relation(fields: [studentId], references: [studentId])
+    studentRecord StudentRecord @relation(fields: [studentRecordId], references: [studentRecordId])
 
-    @@map("student_record")
+    @@map("attendance")
 }
 
 model School {
