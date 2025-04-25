@@ -30,7 +30,7 @@ studentRecordRouter.post(
 );
 // 특정 학생 출결 정보 조회
 studentRecordRouter.get(
-  '/attendance/attendance-stats/students/:studentId',
+  '/attendance-stats/students/:studentId',
   requireAccessToken('TEACHER'),
   verifySchoolUser,
   studentRecordController.getStudentAttendanceStats,

@@ -84,9 +84,9 @@ class StudentRecordService {
   };
   // 특정 학생 출결 정보 조회
   getStudentAttendanceStats = async (studentId) => {
-    // const studentAttendanceStats =
-    //   await this.studentRecordRepository.getStudentAttendanceStats(studentId);
-    // return studentAttendanceStats;
+    const studentAttendanceStats =
+      await this.studentRecordRepository.getStudentAttendanceStats(studentId);
+    return studentAttendanceStats;
   };
   // 특기 사항 조회
   getStudentExtraInfo = async (studentId, semester) => {

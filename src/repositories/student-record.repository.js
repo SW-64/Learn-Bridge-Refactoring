@@ -175,6 +175,50 @@ class StudentRecordRepository {
     });
     return studentRecord;
   };
+
+  // 특정 학생 출결 정보 조회
+  getStudentAttendanceStats = async (studentId) => {
+    const studentRecords = await prisma.studentRecord.findMany({
+      where: {
+        studentId,
+      },
+      select: {
+        grade: true,
+        Attendance: {
+          select: {
+            type: true,
+            reason: true,
+          },
+        },
+      },
+    });
+
+    const stats = {};
+
+    for (const record of studentRecords) {
+      const grade = record.grade;
+      if (!stats[grade]) {
+        stats[grade] = {
+          ABSENCE: { 무단: 0, 질병: 0, 기타: 0 },
+          LATE: { 무단: 0, 질병: 0, 기타: 0 },
+          EARLY: { 무단: 0, 질병: 0, 기타: 0 },
+          PARTIAL_ATTENDANCE: { 무단: 0, 질병: 0, 기타: 0 },
+        };
+      }
+
+      for (const att of record.Attendance) {
+        const reason = att.reason || '기타';
+        const type = att.type;
+
+        if (['무단', '질병', '기타'].includes(reason)) {
+          stats[grade][type][reason] += 1;
+        } else {
+          stats[grade][type]['기타'] += 1;
+        }
+      }
+    }
+    return stats;
+  };
 }
 
 export default StudentRecordRepository;
