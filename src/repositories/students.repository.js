@@ -52,16 +52,17 @@ class StudentsRepository {
   };
 
   //특정 학생 정보 수정
-  updateOneStudent = async (studentId, updateData) => {
+  updateOneStudent = async (studentId, name, grade, gradeClass, number) => {
     const student = await prisma.student.update({
       where: {
         studentId: studentId,
       },
 
-      data: updateData,
-
-      include: {
-        user: true,
+      data: {
+        ...(name && { name: name }),
+        ...(grade && { grade: grade }),
+        ...(gradeClass && { gradeClass: gradeClass }),
+        ...(number && { number: number }),
       },
     });
     return student;
