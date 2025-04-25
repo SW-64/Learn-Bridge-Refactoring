@@ -1,4 +1,6 @@
+import e from 'express';
 import { ATTENDANCE_TYPE } from '../constants/enum.constant.js';
+import { BadRequestError, NotFoundError } from '../errors/http.error.js';
 import StudentRecordRepository from '../repositories/student-record.repository.js';
 import StudentsRepository from '../repositories/students.repository.js';
 import ClassRepository from './../repositories/class.repository.js';
@@ -8,8 +10,8 @@ class StudentRecordService {
   studentsRepository = new StudentsRepository();
   classRepository = new ClassRepository();
   // 특정 학생 해당 학기 출석 조회
-  getStudentAttendance = async (studentId, grade, semester) => {
-    const hasRequiredData = studentId && grade && semester;
+  getStudentAttendance = async (studentId, semester) => {
+    const hasRequiredData = studentId && semester;
     if (!hasRequiredData) throw new NotFoundError('값을 불러오지 못했습니다.');
 
     const existedStudent =
@@ -18,27 +20,40 @@ class StudentRecordService {
       throw new NotFoundError('해당 학생이 존재하지 않습니다.');
     const existedStudentRecord =
       await this.studentRecordRepository.getStudentRecord(
-        grade,
+        existedStudent.grade,
         semester,
         studentId,
       );
-    if (!existedStudentRecord)
-      throw new NotFoundError('해당 학기 학생부가 존재하지 않습니다.');
-    const studentAttendance =
-      await this.studentRecordRepository.getStudentAttendance(
-        existedStudentRecord.studentRecordId,
-      );
-    return studentAttendance;
+    if (!existedStudentRecord) {
+      const createStudentRecord =
+        await this.studentRecordRepository.createStudentRecord(
+          studentId,
+          existedStudent.grade,
+          semester,
+        );
+      const studentAttendance =
+        await this.studentRecordRepository.getStudentAttendance(
+          createStudentRecord.studentRecordId,
+        );
+      return studentAttendance;
+    } else {
+      const studentAttendance =
+        await this.studentRecordRepository.getStudentAttendance(
+          existedStudentRecord.studentRecordId,
+        );
+      return studentAttendance;
+    }
   };
   // 특정 학생 해당 학기 출석 작성 / 수정
-  createStudentAttendance = async (studentId, grade, semester, attendance) => {
+  createStudentAttendance = async (studentId, semester, attendance) => {
     const validAttendanceType = Object.values(ATTENDANCE_TYPE);
-    for (const attendance of validAttendanceType) {
+    for (const item of attendance) {
+      console.log(item);
       if (
-        !attendance.date ||
-        !attendance.reason ||
-        !attendance.type ||
-        !validAttendanceType.includes(attendance.type)
+        !item.date ||
+        !item.reason ||
+        !item.type ||
+        !validAttendanceType.includes(item.type)
       ) {
         throw new BadRequestError(
           `출결 타입이 없거나 유효하지 않은 출결입니다: ${attendance.type}`,
@@ -46,7 +61,7 @@ class StudentRecordService {
       }
     }
 
-    const hasRequiredData = studentId && grade && semester;
+    const hasRequiredData = studentId && semester;
     if (!hasRequiredData) throw new NotFoundError('값을 불러오지 못했습니다.');
     const existedStudent =
       await this.studentsRepository.getOneStudent(studentId);
@@ -54,7 +69,7 @@ class StudentRecordService {
       throw new NotFoundError('해당 학생이 존재하지 않습니다.');
     const existedStudentRecord =
       await this.studentRecordRepository.getStudentRecord(
-        grade,
+        existedStudent.grade,
         semester,
         studentId,
       );
@@ -88,7 +103,7 @@ class StudentRecordService {
       );
     return studentExtraInfo;
   };
-  // 특기 사항 작성 / 수정
+  // 특기 사항 작성
   createStudentExtraInfo = async (studentId, extraInfo, semester) => {
     const hasRequiredData = studentId && extraInfo && semester;
     if (!hasRequiredData) throw new NotFoundError('값을 불러오지 못했습니다.');
@@ -96,12 +111,16 @@ class StudentRecordService {
       await this.studentsRepository.getOneStudent(studentId);
     if (!existedStudent)
       throw new NotFoundError('해당 학생이 존재하지 않습니다.');
-    const studentExtraInfo =
-      await this.studentRecordRepository.createStudentExtraInfo(
-        studentId,
-        extraInfo,
-        semester,
+    const existedStudentRecord =
+      await this.studentRecordRepository.getStudentRecord(
         existedStudent.grade,
+        semester,
+        studentId,
+      );
+    const studentExtraInfo =
+      await this.studentRecordRepository.updateStudentExtraInfo(
+        existedStudentRecord.studentRecordId,
+        extraInfo,
       );
     return studentExtraInfo;
   };
@@ -115,28 +134,52 @@ class StudentRecordService {
     return classAttendance;
   };
   // 반 학생 출석 작성 / 수정
-  createClassAttendance = async (classId, grade, date, attendance) => {
+  createClassAttendance = async (classId, date, attendance, semester) => {
     const validAttendanceType = Object.values(ATTENDANCE_TYPE);
-    for (const attendance of validAttendanceType) {
+    for (const item of attendance) {
       if (
-        !attendance.studentId ||
-        !attendance.reason ||
-        !attendance.type ||
-        !validAttendanceType.includes(attendance.type)
+        !item.studentId ||
+        !item.reason ||
+        !item.type ||
+        !validAttendanceType.includes(item.type)
       ) {
         throw new BadRequestError(
-          `출결 타입이 없거나 유효하지 않은 출결입니다: ${attendance.type}`,
+          `출결 타입이 없거나 유효하지 않은 출결입니다: ${item.type}`,
+        );
+      }
+      const verifiedStudentInCLass =
+        await this.studentsRepository.verifiedStudentInCLass(
+          item.studentId,
+          classId,
+        );
+      if (!verifiedStudentInCLass)
+        throw new NotFoundError('해당 학생이 존재하지 않습니다.');
+
+      const existedStudentRecord =
+        await this.studentRecordRepository.getStudentRecord(
+          verifiedStudentInCLass.grade,
+          semester,
+          item.studentId,
+        );
+      if (!existedStudentRecord) {
+        await this.studentRecordRepository.createStudentRecord(
+          item.studentId,
+          verifiedStudentInCLass.grade,
+          semester,
         );
       }
     }
-    const hasRequiredData = classId && grade && date;
+    const existedClass = await this.classRepository.findClassByClassId(classId);
+    if (!existedClass) throw new NotFoundError('해당 반이 존재하지 않습니다.');
+    const hasRequiredData = classId && date;
     if (!hasRequiredData) throw new NotFoundError('값을 불러오지 못했습니다.');
     const classAttendance =
       await this.studentRecordRepository.createClassAttendance(
         classId,
-        grade,
         date,
         attendance,
+        existedClass.grade,
+        semester,
       );
     return classAttendance;
   };

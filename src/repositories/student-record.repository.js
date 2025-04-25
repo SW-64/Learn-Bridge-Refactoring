@@ -3,7 +3,7 @@ import { prisma } from '../utils/prisma.utils.js';
 class StudentRecordRepository {
   // 특정 학생 해당 학기 출석 조회
   getStudentAttendance = async (studentRecordId) => {
-    const studentAttendance = await this.prisma.attendance.findMany({
+    const studentAttendance = await prisma.attendance.findMany({
       where: {
         studentRecordId,
       },
@@ -55,28 +55,22 @@ class StudentRecordRepository {
         semester,
       },
       select: {
+        grade: true,
+        semester: true,
         extraInfo: true,
       },
     });
     return studentExtraInfo;
   };
 
-  // 특기 사항 작성 / 수정
-  createStudentExtraInfo = async (studentId, extraInfo, semester, grade) => {
-    const studentExtraInfo = await prisma.studentRecord.upsert({
+  // 특기 사항 작성
+  updateStudentExtraInfo = async (studentRecordId, extraInfo) => {
+    const studentExtraInfo = await prisma.studentRecord.update({
       where: {
-        studentId,
-        grade,
-        semester,
+        studentRecordId,
       },
-      update: {
+      data: {
         extraInfo,
-      },
-      create: {
-        studentId,
-        extraInfo,
-        grade,
-        semester,
       },
     });
     return studentExtraInfo;
@@ -93,10 +87,18 @@ class StudentRecordRepository {
         },
         date,
       },
-      include: {
+      select: {
+        date: true,
+        type: true,
+        reason: true,
         studentRecord: {
-          include: {
-            student: true,
+          select: {
+            studentId: true,
+            student: {
+              select: {
+                classId: true,
+              },
+            },
           },
         },
       },
@@ -105,23 +107,31 @@ class StudentRecordRepository {
   };
 
   // 반 학생 출석 작성 / 수정
-  createClassAttendance = async (classId, date, attendanceList) => {
+  createClassAttendance = async (
+    classId,
+    date,
+    attendanceList,
+    grade,
+    semester,
+  ) => {
     const classAttendance = await Promise.all(
       attendanceList.map(async (attendance) => {
-        const existing = await prisma.attendance.findFirst({
+        const existedStudentRecord = await prisma.studentRecord.findFirst({
           where: {
-            studentRecord: {
-              student: {
-                classId,
-              },
-            },
-            date,
+            studentId: attendance.studentId,
+            grade,
+            semester,
           },
         });
-
-        if (existing) {
+        const existedAttendance = await prisma.attendance.findFirst({
+          where: {
+            studentRecordId: existedStudentRecord.studentRecordId,
+            date: attendance.date,
+          },
+        });
+        if (existedAttendance) {
           return prisma.attendance.update({
-            where: { attendanceId: existing.attendanceId },
+            where: { attendanceId: existedAttendance.attendanceId },
             data: {
               type: attendance.type,
               reason: attendance.reason,
@@ -130,7 +140,7 @@ class StudentRecordRepository {
         } else {
           return prisma.attendance.create({
             data: {
-              studentRecordId: attendance.studentRecordId,
+              studentRecordId: existedStudentRecord.studentRecordId,
               date,
               type: attendance.type,
               reason: attendance.reason,
@@ -140,6 +150,30 @@ class StudentRecordRepository {
       }),
     );
     return classAttendance;
+  };
+
+  // 학생부 생성
+  createStudentRecord = async (studentId, grade, semester) => {
+    const studentRecord = await prisma.studentRecord.create({
+      data: {
+        studentId,
+        grade,
+        semester,
+      },
+    });
+    return studentRecord;
+  };
+
+  // 학생부 조회
+  getStudentRecord = async (grade, semester, studentId) => {
+    const studentRecord = await prisma.studentRecord.findFirst({
+      where: {
+        studentId,
+        grade,
+        semester,
+      },
+    });
+    return studentRecord;
   };
 }
 

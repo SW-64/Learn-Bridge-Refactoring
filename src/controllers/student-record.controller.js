@@ -7,13 +7,12 @@ class StudentRecordController {
   // 특정 학생 해당 학기 출석 조회
   getStudentAttendance = async (req, res, next) => {
     const { studentId } = req.params;
-    const { grade, semester } = req.body;
+    const { semester } = req.query;
 
     try {
       const data = await this.studentRecordService.getStudentAttendance(
         +studentId,
-        grade,
-        semester,
+        +semester,
       );
       return res.status(HTTP_STATUS.OK).json({
         status: HTTP_STATUS.OK,
@@ -27,12 +26,11 @@ class StudentRecordController {
   // 특정 학생 해당 학기 출석 작성 / 수정
   createStudentAttendance = async (req, res, next) => {
     const { studentId } = req.params;
-    const { grade, semester, attendance } = req.body;
+    const { semester, attendance } = req.body;
 
     try {
       const data = await this.studentRecordService.createStudentAttendance(
         +studentId,
-        grade,
         semester,
         attendance,
       );
@@ -102,7 +100,7 @@ class StudentRecordController {
   // 반 학생 출석 조회
   getClassAttendance = async (req, res, next) => {
     const { classId } = req.params;
-    const { date } = req.body;
+    const { date } = req.query;
 
     try {
       const data = await this.studentRecordService.getClassAttendance(
@@ -121,14 +119,14 @@ class StudentRecordController {
   // 반 학생 출석 작성 / 수정
   createClassAttendance = async (req, res, next) => {
     const { classId } = req.params;
-    const { grade, date, attendance } = req.body;
+    const { date, attendance, semester } = req.body;
 
     try {
       const data = await this.studentRecordService.createClassAttendance(
         +classId,
-        grade,
         date,
         attendance,
+        semester,
       );
       return res.status(HTTP_STATUS.CREATED).json({
         status: HTTP_STATUS.CREATED,

@@ -5,6 +5,7 @@ import { requireAccessToken } from '../middlewares/require-access-token.middlewa
 import { verifySchoolUser } from '../middlewares/verify-school-user.middleware.js';
 import StudentRecordController from '../controllers/student-record.controller.js';
 import StudentRecordService from '../services/student-record.service.js';
+import { verifyHomeroomTeacher } from '../middlewares/verify-homeroom-teacher-middleware.js';
 
 const studentRecordRouter = express.Router({ mergeParams: true });
 const studentRecordRepository = new StudentRecordRepository(prisma);
@@ -52,6 +53,7 @@ studentRecordRouter.post(
 studentRecordRouter.get(
   '/attendance/class/:classId',
   requireAccessToken('TEACHER'),
+  verifyHomeroomTeacher,
   verifySchoolUser,
   studentRecordController.getClassAttendance,
 );
@@ -59,6 +61,7 @@ studentRecordRouter.get(
 studentRecordRouter.post(
   '/attendance/class/:classId',
   requireAccessToken('TEACHER'),
+  verifyHomeroomTeacher,
   verifySchoolUser,
   studentRecordController.createClassAttendance,
 );

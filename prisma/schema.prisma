@@ -93,9 +93,9 @@ model StudentRecord {
 model Attendance {
     attendanceId    Int            @id @default(autoincrement()) @map("attendance_id")
     studentRecordId Int            @map("student_record_id")
-    date            DateTime
+    date            String
     type            AttendanceType
-    reason          Reason?
+    reason          String?
     createdAt       DateTime       @default(now()) @map("created_at")
     updatedAt       DateTime       @updatedAt @map("updated_at")
 
@@ -194,16 +194,10 @@ enum UserRole {
 }
 
 enum AttendanceType {
-    ATTENDANCE
+    ABSENCE
     LATE
-    ABSENT
-    LEAVE_EARLY
-}
-
-enum Reason {
-    SICK_LEAVE
-    UNEXCUSED_ABSENCE
-    OTEHR_REASONS
+    EARLY
+    PARTIAL_ATTENDANCE
 }
 
 enum Category {

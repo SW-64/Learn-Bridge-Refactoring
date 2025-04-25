@@ -107,6 +107,20 @@ class StudentsRepository {
 
     return student;
   };
+
+  // 해당 반 학생의 학생이 맞는지 조회
+  verifiedStudentInCLass = async (studentId, classId) => {
+    const student = await prisma.student.findFirst({
+      where: {
+        studentId,
+        classId,
+      },
+      select: {
+        grade: true,
+      },
+    });
+    return student;
+  };
 }
 
 export default StudentsRepository;
