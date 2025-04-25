@@ -7,6 +7,9 @@ class TeacherRepository {
       where: {
         userId,
       },
+      include: {
+        user: true,
+      },
     });
     return data;
   };

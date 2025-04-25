@@ -132,16 +132,18 @@ model Grade {
 }
 
 model Consultation {
-    consultationId Int      @id @default(autoincrement()) @map("consultation_id")
-    studentId      Int      @map("student_id")
-    teacherId      Int      @map("teacher_id")
-    date           DateTime
-    content        String
-    nextPlan       DateTime
-    title          String
-    subject        String
-    createdAt      DateTime @default(now()) @map("created_at")
-    updatedAt      DateTime @updatedAt @map("updated_at")
+    consultationId    Int      @id @default(autoincrement()) @map("consultation_id")
+    studentId         Int      @map("student_id")
+    teacherId         Int      @map("teacher_id")
+    date              DateTime
+    content           String
+    nextPlan          DateTime
+    title             String
+    subject           String
+    author            String
+    isPublicToSubject Boolean
+    createdAt         DateTime @default(now()) @map("created_at")
+    updatedAt         DateTime @updatedAt @map("updated_at")
 
     student Student @relation(fields: [studentId], references: [studentId])
     teacher Teacher @relation(fields: [teacherId], references: [teacherId])
