@@ -77,11 +77,11 @@ class GradesController {
   getClassGrades = async (req, res, next) => {
     try {
       const { classId } = req.params;
-      const { semester } = req.body;
+      const { semester } = req.query;
 
       const grades = await this.gradesService.getClassGrades(
         +classId,
-        semester,
+        +semester,
       );
       return res.status(HTTP_STATUS.OK).json({
         status: HTTP_STATUS.OK,
