@@ -37,6 +37,13 @@ class UserRepository {
           teacher: {
             select: {
               isHomeroom: true,
+              subject: true,
+              class: {
+                select: {
+                  grade: true,
+                  gradeClass: true,
+                },
+              },
             },
           },
         }),
