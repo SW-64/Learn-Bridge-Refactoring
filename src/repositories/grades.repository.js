@@ -43,7 +43,8 @@ class GradesRepository {
           subject: grade.subject,
         },
         data: {
-          score: grade.score,
+          scoreIv: grade.scoreIv,
+          scoreContent: grade.scoreContent,
         },
       }),
     );
@@ -80,7 +81,8 @@ class GradesRepository {
       },
       select: {
         subject: true,
-        score: true,
+        scoreIv: true,
+        scoreContent: true,
         student: {
           select: {
             studentId: true,

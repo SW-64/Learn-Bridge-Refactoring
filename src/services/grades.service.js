@@ -1,7 +1,7 @@
 import { ConflictError, NotFoundError } from '../errors/http.error.js';
 import GradesRepository from '../repositories/grades.repository.js';
 import StudentsRepository from '../repositories/students.repository.js';
-
+import { decrypt, encrypt } from '../utils/crypto.util.js';
 class GradesService {
   gradeRepository = new GradesRepository();
   studentRepository = new StudentsRepository();
@@ -13,6 +13,11 @@ class GradesService {
       if (!schoolYear || !semester || !subject || !score || !studentId) {
         throw new NotFoundError('값을 불러오지 못했습니다.');
       }
+      const encryptedGrades = encrypt(score);
+      // 초기화 벡터
+      const scoreIv = encryptedGrades.iv;
+      // 암호화된 성적
+      const scoreContent = encryptedGrades.content;
 
       const existedGrades =
         await this.gradeRepository.getGradesByPeriodAndSubject(
@@ -21,12 +26,14 @@ class GradesService {
           schoolYear,
           semester,
         );
-
       if (existedGrades) {
         throw new ConflictError(
           `이미 존재하는 성적입니다: ${subject}, ${schoolYear}, ${semester}`,
         );
       }
+      item.scoreIv = scoreIv;
+      item.scoreContent = scoreContent;
+      delete item.score;
     }
     const grades = await this.gradeRepository.createGrades(gradesWithStudentId);
     return grades;
@@ -52,6 +59,13 @@ class GradesService {
         subject,
         studentId,
       );
+      for (const grade of grades) {
+        // 성적 복호화
+        const decryptedGrades = decrypt(grade.scoreIv, grade.scoreContent);
+        grade.score = Number(decryptedGrades);
+        delete grade.scoreIv;
+        delete grade.scoreContent;
+      }
       return grades;
     }
 
@@ -62,6 +76,13 @@ class GradesService {
         semester,
         studentId,
       );
+      for (const grade of grades) {
+        // 성적 복호화
+        const decryptedGrades = decrypt(grade.scoreIv, grade.scoreContent);
+        grade.score = Number(decryptedGrades);
+        delete grade.scoreIv;
+        delete grade.scoreContent;
+      }
       return grades;
     }
   };
@@ -74,6 +95,11 @@ class GradesService {
       if (!schoolYear || !semester || !subject || !score || !studentId) {
         throw new NotFoundError('값을 불러오지 못했습니다.');
       }
+      const encryptedGrades = encrypt(score);
+      // 초기화 벡터
+      const scoreIv = encryptedGrades.iv;
+      // 암호화된 성적
+      const scoreContent = encryptedGrades.content;
 
       const existedGrades =
         await this.gradeRepository.getGradesByPeriodAndSubject(
@@ -88,6 +114,9 @@ class GradesService {
           `입력되지 않은 성적입니다.: ${subject}, ${schoolYear}, ${semester}`,
         );
       }
+      item.scoreIv = scoreIv;
+      item.scoreContent = scoreContent;
+      delete item.score;
     }
 
     const grades = await this.gradeRepository.updateGrades(gradesWithStudentId);
@@ -100,6 +129,13 @@ class GradesService {
       throw new NotFoundError('반 ID와 학기를 입력해주세요.');
     }
     const grades = await this.gradeRepository.getClassGrades(classId, semester);
+    for (const grade of grades) {
+      // 성적 복호화
+      const decryptedGrades = decrypt(grade.scoreIv, grade.scoreContent);
+      grade.score = Number(decryptedGrades);
+      delete grade.scoreIv;
+      delete grade.scoreContent;
+    }
     return grades;
   };
 }
