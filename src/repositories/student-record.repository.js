@@ -97,6 +97,7 @@ class StudentRecordRepository {
             student: {
               select: {
                 classId: true,
+                number: true,
               },
             },
           },
