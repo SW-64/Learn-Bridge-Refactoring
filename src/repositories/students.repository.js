@@ -59,7 +59,7 @@ class StudentsRepository {
       },
 
       data: {
-        ...(name && { name: name }),
+        ...(name && { user: { update: { name: name } } }),
         ...(grade && { grade: grade }),
         ...(gradeClass && { gradeClass: gradeClass }),
         ...(number && { number: number }),
