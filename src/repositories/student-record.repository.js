@@ -97,6 +97,7 @@ class StudentRecordRepository {
             student: {
               select: {
                 classId: true,
+                number: true,
               },
             },
           },
@@ -205,9 +206,10 @@ class StudentRecordRepository {
           PARTIAL_ATTENDANCE: { 무단: 0, 질병: 0, 기타: 0 },
         };
       }
-
+      console.log(record.Attendance);
       for (const att of record.Attendance) {
-        const reason = att.reason || '기타';
+        const reason =
+          att.reason == 1 ? '무단' : att.reason == 2 ? '질병' : '기타';
         const type = att.type;
 
         if (['무단', '질병', '기타'].includes(reason)) {

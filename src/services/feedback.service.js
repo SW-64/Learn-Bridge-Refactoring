@@ -92,6 +92,22 @@ class FeedbackService {
     );
     return feedback;
   };
+
+  // 피드백 조회 ( 학생 / 학부모 )
+  getMyFeedback = async (userId, schoolYear) => {
+    const hasRequiredData = userId && schoolYear;
+    if (!hasRequiredData) throw new NotFoundError('값을 불러오지 못했습니다.');
+
+    const student = await this.studentRepository.getStudentByUserId(userId);
+    if (!student) throw new NotFoundError('해당 학생이 존재하지 않습니다.');
+
+    const getMyFeedback = await this.feedbackRepository.getMyFeedback(
+      student.studentId,
+      schoolYear,
+    );
+
+    return getMyFeedback;
+  };
 }
 
 export default FeedbackService;

@@ -8,3 +8,4 @@ export const KAKAO_CLIENT_SECRET = process.env.KAKAO_CLIENT_SECRET;
 export const KAKAO_CALLBACK_URL = process.env.KAKAO_CALLBACK_URI;
 export const ACCESS_TOKEN_EXPIRED_IN = process.env.ACCESS_TOKEN_EXPIRED_IN;
 export const REFRESH_TOKEN_EXPIRED_IN = process.env.REFRESH_TOKEN_EXPIRED_IN;
+export const CRYPTO_SECRET_KEY = process.env.CRYPTO_SECRET_KEY;

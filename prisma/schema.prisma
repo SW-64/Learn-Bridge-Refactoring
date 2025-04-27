@@ -129,14 +129,15 @@ model Class {
 }
 
 model Grade {
-    gradeId    Int      @id @default(autoincrement()) @map("grade_id")
-    studentId  Int      @map("student_id")
-    schoolYear Int
-    semester   Int
-    subject    String
-    score      Int
-    createdAt  DateTime @default(now()) @map("created_at")
-    updatedAt  DateTime @updatedAt @map("updated_at")
+    gradeId      Int      @id @default(autoincrement()) @map("grade_id")
+    studentId    Int      @map("student_id")
+    schoolYear   Int
+    semester     Int
+    subject      String
+    scoreContent String
+    scoreIv      String
+    createdAt    DateTime @default(now()) @map("created_at")
+    updatedAt    DateTime @updatedAt @map("updated_at")
 
     student Student @relation(fields: [studentId], references: [studentId])
 
