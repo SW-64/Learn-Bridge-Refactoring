@@ -127,7 +127,7 @@ class StudentRecordRepository {
         const existedAttendance = await prisma.attendance.findFirst({
           where: {
             studentRecordId: existedStudentRecord.studentRecordId,
-            date: attendance.date,
+            date,
           },
         });
         if (existedAttendance) {
@@ -137,6 +137,13 @@ class StudentRecordRepository {
               type: attendance.type,
               reason: attendance.reason,
             },
+            include: {
+              studentRecord: {
+                select: {
+                  studentId: true,
+                },
+              },
+            },
           });
         } else {
           return prisma.attendance.create({
@@ -145,6 +152,13 @@ class StudentRecordRepository {
               date,
               type: attendance.type,
               reason: attendance.reason,
+            },
+            include: {
+              studentRecord: {
+                select: {
+                  studentId: true,
+                },
+              },
             },
           });
         }
