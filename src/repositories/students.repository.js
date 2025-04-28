@@ -64,6 +64,13 @@ class StudentsRepository {
         ...(gradeClass && { gradeClass: gradeClass }),
         ...(number && { number: number }),
       },
+      include: {
+        user: {
+          select: {
+            name: true,
+          },
+        },
+      },
     });
     return student;
   };
