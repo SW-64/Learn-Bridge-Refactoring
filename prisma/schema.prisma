@@ -28,6 +28,7 @@ model User {
     student      Student?
     school       School        @relation(fields: [schoolId], references: [schoolId])
     RefreshToken RefreshToken?
+    notification Notification[]
 
     @@map("users")
 }
@@ -189,6 +190,17 @@ model RefreshToken {
     @@map("refresh_tokens")
 }
 
+model Notification {
+    notificationId Int      @id @default(autoincrement()) @map("notification_id")
+    userId         Int      @map("user_id")
+    type          NotificationType
+    message       String
+    isRead        Boolean  @default(false) @map("is_read")
+    createdAt     DateTime @default(now())
+
+    user           User     @relation(fields: [userId], references: [id])
+}
+
 enum UserRole {
     TEACHER
     STUDENT
@@ -206,4 +218,10 @@ enum Category {
     BEHAVIOR
     ATTENDANCE
     ATTITUDE
+}
+
+enum NotificationType {
+    GRADE
+    CONSULTATION
+    FEEDBACK
 }
