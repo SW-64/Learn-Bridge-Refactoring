@@ -2,7 +2,7 @@ import { prisma } from '../utils/prisma.utils.js';
 
 class FeedbackRepository {
   // 피드백 작성
-  createFeedback = async (studentId, feedback, schoolYear) => {
+  createFeedback = async (studentId, feedback, schoolYear, studentUserId) => {
     const feedbackWithMeta = feedback.map((item) => ({
       ...item,
       studentId,
@@ -12,11 +12,17 @@ class FeedbackRepository {
     const createdFeedback = await prisma.feedback.createMany({
       data: feedbackWithMeta,
     });
-
+    const notification = await prisma.notification.create({
+      data : {
+        userId: studentUserId,
+        type:"FEEDBACK",
+        message: `${schoolYear}학년 생성`
+      }
+    })
     return createdFeedback;
   };
   // 피드백 수정
-  updateFeedback = async (studentId, feedback, schoolYear) => {
+  updateFeedback = async (studentId, feedback, schoolYear, studentUserId) => {
     const updates = feedback.map((item) =>
       prisma.feedback.updateMany({
         where: {
@@ -30,7 +36,13 @@ class FeedbackRepository {
         },
       }),
     );
-
+    const notification = await prisma.notification.create({
+      data : {
+        userId: studentUserId,
+        type:"FEEDBACK",
+        message: `${schoolYear}학년 생성`
+      }
+    })
     const results = await Promise.all(updates);
     return results;
   };
