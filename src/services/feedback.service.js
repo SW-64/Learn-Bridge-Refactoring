@@ -43,6 +43,7 @@ class FeedbackService {
       studentId,
       feedback,
       schoolYear,
+      existedStudent.user.id,
     );
     return createdFeedback;
   };
@@ -73,6 +74,7 @@ class FeedbackService {
       studentId,
       feedback,
       schoolYear,
+      existedStudent.user.id,
     );
     return updatedFeedback;
   };

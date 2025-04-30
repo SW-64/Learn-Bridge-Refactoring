@@ -69,7 +69,7 @@ class ConsultationRepository {
   };
 
   // 상담 기록 입력
-  create = async ({
+  create = async (
     title,
     content,
     date,
@@ -79,7 +79,8 @@ class ConsultationRepository {
     author,
     studentId,
     teacherId,
-  }) => {
+    studentUserId
+  ) => {
     const data = await prisma.consultation.create({
       data: {
         title,
@@ -98,6 +99,13 @@ class ConsultationRepository {
         },
       },
     });
+    const notification = await prisma.notification.create({
+      data : {
+        userId: studentUserId,
+        type:"CONSULTATION",
+        message: `${date}날짜 생성`
+      }
+    })
     return data;
   };
 

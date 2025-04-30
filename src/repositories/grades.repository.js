@@ -2,10 +2,22 @@ import { prisma } from '../utils/prisma.utils.js';
 
 class GradesRepository {
   // 성적 입력
-  createGrades = async (gradesWithStudentId) => {
+  createGrades = async (gradesWithStudentId, studentUserId) => {
     const data = await prisma.grade.createMany({
       data: gradesWithStudentId,
     });
+    
+    const schoolYear = gradesWithStudentId[0].schoolYear;
+    const semester = gradesWithStudentId[0].semester;
+
+    const notification = await prisma.notification.create({
+      data : {
+        userId: studentUserId,
+        type:"GRADE",
+        message: `${schoolYear}학년 ${semester}학기 생성`
+      }
+    })
+
     return data;
   };
 
@@ -33,7 +45,7 @@ class GradesRepository {
   };
 
   // 성적 수정
-  updateGrades = async (gradesWithStudentId) => {
+  updateGrades = async (gradesWithStudentId, studentUserId) => {
     const grades = gradesWithStudentId.map((grade) =>
       prisma.grade.updateMany({
         where: {
@@ -48,6 +60,15 @@ class GradesRepository {
         },
       }),
     );
+    const schoolYear = gradesWithStudentId[0].schoolYear;
+    const semester = gradesWithStudentId[0].semester;
+    const notification = await prisma.notification.create({
+      data : {
+        userId: studentUserId,
+        type:"GRADE",
+        message: `${schoolYear}학년 ${semester}학기 업데이트`
+      }
+    })
     const results = await Promise.all(grades);
     return results;
   };

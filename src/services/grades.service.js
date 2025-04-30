@@ -35,7 +35,9 @@ class GradesService {
       item.scoreContent = scoreContent;
       delete item.score;
     }
-    const grades = await this.gradeRepository.createGrades(gradesWithStudentId);
+    const studentId = gradesWithStudentId[0].studentId;
+    const student = await this.studentRepository.getOneStudent(studentId);
+    const grades = await this.gradeRepository.createGrades(gradesWithStudentId, student.user.id);
     return grades;
   };
   // 성적 조회
@@ -118,8 +120,9 @@ class GradesService {
       item.scoreContent = scoreContent;
       delete item.score;
     }
-
-    const grades = await this.gradeRepository.updateGrades(gradesWithStudentId);
+    const studentId = gradesWithStudentId[0].studentId;
+    const student = await this.studentRepository.getOneStudent(studentId);
+    const grades = await this.gradeRepository.updateGrades(gradesWithStudentId, student.user.id);
     return grades;
   };
 

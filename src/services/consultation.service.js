@@ -117,7 +117,13 @@ class ConsultationService {
     const author = teacher.user.name;
     const teacherId = teacher.teacherId;
 
-    const data = await this.consultationRepository.create({
+    // 학생 ID에 맞는 학생이 없다면 에러 반환
+    const existedStudent =
+      await this.studentRepository.getOneStudent(studentId);
+    if (!existedStudent)
+      throw new NotFoundError('해당 학생이 존재하지 않습니다.');
+
+    const data = await this.consultationRepository.create(
       title,
       content,
       date,
@@ -127,7 +133,8 @@ class ConsultationService {
       subject,
       author,
       teacherId,
-    });
+      existedStudent.user.id,
+    );
     return data;
   };
 

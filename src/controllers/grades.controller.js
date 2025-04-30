@@ -9,7 +9,7 @@ class GradesController {
     try {
       // 학년, 학기, 과목, 점수 값 받기
       const gradesList = req.body; //{ schoolYear, semester, subject, score }
-
+      
       // 학생 ID 파라미터로 받기
       const { studentId } = req.params;
       const gradesWithStudentId = gradesList.map((grade) => ({
