@@ -129,9 +129,9 @@ class ConsultationService {
       date,
       nextPlan,
       isPublicToSubject,
-      studentId,
       subject,
       author,
+      studentId,
       teacherId,
       existedStudent.user.id,
     );

@@ -36,5 +36,5 @@ apiRouter.use('/api/v1/school/:schoolId/users', userRouter);
 apiRouter.use('/api/v1/school', schoolRouter);
 
 // 알림 라우터
-apiRouter.use('/api/v1/school/:schoolId/notification', notificationRouter)
+apiRouter.use('/api/v1/school/:schoolId/notifications', notificationRouter);
 export { apiRouter };

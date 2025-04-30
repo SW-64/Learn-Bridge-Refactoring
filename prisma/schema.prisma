@@ -15,18 +15,18 @@ datasource db {
 }
 
 model User {
-    id           Int           @id @default(autoincrement())
-    schoolId     Int           @map("school_id")
+    id           Int            @id @default(autoincrement())
+    schoolId     Int            @map("school_id")
     name         String?
     role         UserRole?
-    email        String        @unique
+    email        String         @unique
     password     String?
     photo        String?
-    createdAt    DateTime      @default(now()) @map("created_at")
-    updatedAt    DateTime      @updatedAt @map("updated_at")
+    createdAt    DateTime       @default(now()) @map("created_at")
+    updatedAt    DateTime       @updatedAt @map("updated_at")
     teacher      Teacher?
     student      Student?
-    school       School        @relation(fields: [schoolId], references: [schoolId])
+    school       School         @relation(fields: [schoolId], references: [schoolId])
     RefreshToken RefreshToken?
     notification Notification[]
 
@@ -191,14 +191,16 @@ model RefreshToken {
 }
 
 model Notification {
-    notificationId Int      @id @default(autoincrement()) @map("notification_id")
-    userId         Int      @map("user_id")
-    type          NotificationType
-    message       String
-    isRead        Boolean  @default(false) @map("is_read")
-    createdAt     DateTime @default(now())
+    notificationId Int              @id @default(autoincrement()) @map("notification_id")
+    userId         Int              @map("user_id")
+    type           NotificationType
+    message        String
+    isRead         Boolean          @default(false) @map("is_read")
+    createdAt      DateTime         @default(now())
 
-    user           User     @relation(fields: [userId], references: [id])
+    user User @relation(fields: [userId], references: [id])
+
+    @@map("notifications")
 }
 
 enum UserRole {
