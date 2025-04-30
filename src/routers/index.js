@@ -7,7 +7,7 @@ import { feedbackRouter } from './feedback.router.js';
 import { consultationRouter } from './consultation.router.js';
 import { schoolRouter } from './school.router.js';
 import { userRouter } from './user.router.js';
-import { verifySchoolUser } from './../middlewares/verify-school-user.middleware.js';
+import { notificationRouter } from './notification.router.js';
 
 const apiRouter = express.Router();
 
@@ -35,4 +35,6 @@ apiRouter.use('/api/v1/school/:schoolId/users', userRouter);
 // 학교 라우터
 apiRouter.use('/api/v1/school', schoolRouter);
 
+// 알림 라우터
+apiRouter.use('/api/v1/school/:schoolId/notification', notificationRouter)
 export { apiRouter };
