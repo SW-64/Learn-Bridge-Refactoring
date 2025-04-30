@@ -45,7 +45,7 @@ class StudentsController {
   //특정 학생 정보 수정
   updateOneStudent = async (req, res, next) => {
     try {
-      const { studentId } = req.params;
+      const { studentId, schoolId } = req.params;
       const { name, grade, gradeClass, number } = req.body;
 
       const data = await this.studentsService.updateOneStudent(
@@ -54,6 +54,7 @@ class StudentsController {
         grade,
         gradeClass,
         number,
+        +schoolId,
       ); //받은 값들을 매개변수로 연결
 
       return res.status(HTTP_STATUS.OK).json({

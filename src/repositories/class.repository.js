@@ -19,6 +19,23 @@ class ClassRepository {
     });
     return data;
   };
+
+  findClassByGradeAndClass = async (grade, gradeClass, schoolId) => {
+    const data = await prisma.class.findFirst({
+      where: {
+        grade,
+        gradeClass,
+        teacher: {
+          is: {
+            user: {
+              schoolId,
+            },
+          },
+        },
+      },
+    });
+    return data;
+  };
 }
 
 export default ClassRepository;
