@@ -4,10 +4,11 @@ import { NotFoundError } from '../errors/http.error.js';
 import UserRepository from '../repositories/user.repository.js';
 import TeacherRepository from '../repositories/teacher.repository.js';
 import bcrypt from 'bcrypt';
+import SchoolRepository from '../repositories/school.repository.js';
 class UserService {
   userRepository = new UserRepository();
   teacherRepository = new TeacherRepository();
-
+  schoolRepository = new SchoolRepository();
   // 담임 설정 및 반 생성
   assignHomeRoom = async (grade, gradeClass, userId) => {
     // 반에 담임이 이미 존재한다면 에러 반환
@@ -50,6 +51,23 @@ class UserService {
     );
     if (!updatedUser) throw new Error('유저를 찾을 수 없습니다.');
     return;
+  };
+
+  // 내 정보 수정
+  updateMyInfo = async (userId, name, schoolName, profile) => {
+    const user = await this.userRepository.getUserById(userId);
+    if (!user) throw new NotFoundError('유저를 찾을 수 없습니다.');
+    const school = schoolName
+      ? await this.schoolRepository.findSchoolBySchoolName(schoolName)
+      : null;
+
+    const updatedUser = await this.userRepository.updateMyInfo(
+      userId,
+      name,
+      profile,
+      school ? school[0].schoolId : null,
+    );
+    return updatedUser;
   };
 }
 
