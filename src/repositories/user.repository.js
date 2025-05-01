@@ -13,19 +13,6 @@ class UserRepository {
     return data;
   };
 
-  // 반 생성
-  createClass = async (grade, gradeClass, teacherId) => {
-    const data = await prisma.class.create({
-      data: {
-        grade,
-        gradeClass,
-        //반 테이블과 교사 테이블을 연결
-        teacherId,
-      },
-    });
-    return data;
-  };
-
   // 내 정보 조회
   getUserById = async (userId, userRole) => {
     const user = await prisma.user.findUnique({

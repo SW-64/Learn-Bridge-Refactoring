@@ -8,13 +8,14 @@ class UserController {
   assignHomeRoom = async (req, res, next) => {
     try {
       const userId = req.user.id;
-
+      const { schoolId } = req.params;
       const { grade, gradeClass } = req.body;
 
       const data = await this.userService.assignHomeRoom(
         grade,
         gradeClass,
         userId,
+        +schoolId,
       );
 
       return res.status(HTTP_STATUS.OK).json({
