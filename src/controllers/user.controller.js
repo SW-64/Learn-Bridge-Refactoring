@@ -8,13 +8,14 @@ class UserController {
   assignHomeRoom = async (req, res, next) => {
     try {
       const userId = req.user.id;
-
+      const { schoolId } = req.params;
       const { grade, gradeClass } = req.body;
 
       const data = await this.userService.assignHomeRoom(
         grade,
         gradeClass,
         userId,
+        +schoolId,
       );
 
       return res.status(HTTP_STATUS.OK).json({
@@ -60,6 +61,29 @@ class UserController {
       return res.status(HTTP_STATUS.OK).json({
         status: HTTP_STATUS.OK,
         message: '내 비밀번호 수정 성공',
+        data,
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  // 내 정보 수정
+  updateMyInfo = async (req, res, next) => {
+    try {
+      const userId = req.user.id;
+      const { name, schoolName, profile } = req.body;
+
+      const data = await this.userService.updateMyInfo(
+        userId,
+        name,
+        schoolName,
+        profile,
+      );
+
+      return res.status(HTTP_STATUS.OK).json({
+        status: HTTP_STATUS.OK,
+        message: '내 정보 수정 성공',
         data,
       });
     } catch (err) {
