@@ -92,7 +92,7 @@ class ConsultationService {
     userId,
   ) => {
     // 요청 값이 제대로 들어오지 않았다면 에러 반환
-    if (!title || !content || !date || !nextPlan || !isPublicToSubject) {
+    if (!title || !content || !date || !nextPlan) {
       throw new BadRequestError('요청 값이 제대로 들어오지 않았습니다.');
     }
 
