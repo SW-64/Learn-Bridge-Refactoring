@@ -70,7 +70,7 @@ class StudentsRepository {
         ...(grade && { grade: grade }),
         ...(gradeClass && { gradeClass: gradeClass }),
         ...(number && { number: number }),
-        ...(grade && classId && { classId: classId }),
+        ...(grade && classId && { class: { connect: { classId } } }),
       },
       include: {
         user: {
