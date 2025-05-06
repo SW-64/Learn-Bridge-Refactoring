@@ -34,6 +34,16 @@ class UserRepository {
             },
           },
         }),
+        ...(userRole === 'STUDENT' && {
+          student: {
+            select: {
+              studentId: true,
+              grade: true,
+              gradeClass: true,
+              number: true,
+            },
+          },
+        }),
         school: {
           select: {
             schoolName: true,
