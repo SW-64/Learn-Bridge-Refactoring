@@ -23,7 +23,7 @@ gradesRouter.post(
 // 성적 조회
 gradesRouter.get(
   '/students/:studentId',
-  requireAccessToken('TEACHER'),
+  requireAccessToken(''),
   verifySchoolUser,
   gradesController.getGrades,
 );

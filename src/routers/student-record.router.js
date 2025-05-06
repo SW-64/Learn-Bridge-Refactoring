@@ -17,7 +17,7 @@ const studentRecordController = new StudentRecordController(
 // 특정 학생 해당 학기 출석 조회
 studentRecordRouter.get(
   '/attendance/students/:studentId',
-  requireAccessToken('TEACHER'),
+  requireAccessToken(''),
   verifySchoolUser,
   studentRecordController.getStudentAttendance,
 );
@@ -31,14 +31,14 @@ studentRecordRouter.post(
 // 특정 학생 출결 정보 조회
 studentRecordRouter.get(
   '/attendance-stats/students/:studentId',
-  requireAccessToken('TEACHER'),
+  requireAccessToken(''),
   verifySchoolUser,
   studentRecordController.getStudentAttendanceStats,
 );
 // 특기 사항 조회
 studentRecordRouter.get(
   '/extra-info/students/:studentId',
-  requireAccessToken('TEACHER'),
+  requireAccessToken(''),
   verifySchoolUser,
   studentRecordController.getStudentExtraInfo,
 );

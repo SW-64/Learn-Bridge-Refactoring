@@ -14,21 +14,21 @@ const consultationController = new ConsultationController(consultationService);
 // 특정 학생 상담 내역 전체 조회
 consultationRouter.get(
   '/students/:studentId',
-  requireAccessToken('TEACHER'),
+  requireAccessToken(''),
   consultationController.getAllConsultation,
 );
 
 // 특정 기준 별 상담 내역 조회 (기간, 과목, 제목, 작성자)
 consultationRouter.get(
   '/students/:studentId/search',
-  requireAccessToken('TEACHER'),
+  requireAccessToken(''),
   consultationController.getConsultation,
 );
 
 // 상담 기록 조회
 consultationRouter.get(
   '/:consultationId/students/:studentId',
-  requireAccessToken('TEACHER'),
+  requireAccessToken(''),
   consultationController.getConsultationContent,
 );
 
