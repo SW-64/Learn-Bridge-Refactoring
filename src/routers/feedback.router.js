@@ -30,7 +30,7 @@ feedbackRouter.patch(
 // 피드백 조회
 feedbackRouter.get(
   '/students/:studentId',
-  requireAccessToken('TEACHER'),
+  requireAccessToken(''),
   verifySchoolUser,
   feedbackController.getFeedback,
 );
