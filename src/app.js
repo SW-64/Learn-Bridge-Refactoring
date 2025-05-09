@@ -3,6 +3,7 @@ import cors from 'cors';
 import 'dotenv/config';
 import { globalErrorHandler } from './middlewares/error-handler.middleware.js';
 import { apiRouter } from './routers/index.js';
+import { NotFoundError } from './errors/http.error.js';
 
 const app = express();
 const port = process.env.SERVER_PORT;
@@ -25,6 +26,16 @@ app.use(globalErrorHandler); // 미들웨어 중, 에러처리 미들웨어는 �
 // Test Routing
 app.get('/', (req, res) => {
   return res.json('hello world CICD');
+});
+
+// Error Basic Test Routing
+app.get('/error', (req, res) => {
+  throw new Error('basic error test');
+});
+
+// Error NotFoundError Test Routing
+app.get('/not-found-error', (req, res) => {
+  throw new NotFoundError('Not found error test');
 });
 
 app.listen(port, () => {
