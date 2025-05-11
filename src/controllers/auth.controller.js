@@ -52,7 +52,6 @@ class AuthController {
       const { email, password } = req.body;
 
       const data = await this.authService.signIn({ email, password });
-
       return res.status(HTTP_STATUS.OK).json({
         status: HTTP_STATUS.OK,
         message: MESSAGES.AUTH.SIGN_IN.SUCCEED,
