@@ -5,33 +5,28 @@ import { authConstant } from '../constants/auth.constant.js';
 class AuthRepository {
   // 회원가입
   create = async ({
-    email,
     name,
     role,
-    password,
-    photo,
+    email,
+    phonenumber,
+    homenumber,
+    address,
     subject,
     grade,
-    number,
-    gradeClass,
     schoolId,
-    classId,
+    rawPassword,
   }) => {
     //비밀번호 암호화처리
     const hashedPassword = bcrypt.hashSync(
-      password,
+      rawPassword,
       authConstant.HASH_SALT_ROUNDS,
     );
 
     const data = await prisma.user.create({
       data: {
-        email,
         name,
         role,
-        photo,
-        password: hashedPassword,
-        // 유저 테이블과 학교 테이블을 연결
-        schoolId,
+        email,
         //...(role === 'TEACHER' && { subject }), // 선생님인 경우 과목 작성
         ...(role === 'TEACHER' && {
           // 선생님일 경우 teacher 테이블 생성
@@ -46,13 +41,17 @@ class AuthRepository {
           student: {
             create: {
               grade,
-              number,
-              gradeClass,
-              // 학생 테이블과 반 테이블 연결
-              classId,
+              phonenumber,
+              homenumber,
+              address,
+              gradeClass: null,
+              number: null,
+              classId: null,
             },
           },
         }),
+        schoolId,
+        password: hashedPassword,
       },
       include: { teacher: true, student: true },
     });
