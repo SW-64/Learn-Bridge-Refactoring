@@ -2,6 +2,7 @@ import { ConflictError, NotFoundError } from '../errors/http.error.js';
 import GradesRepository from '../repositories/grades.repository.js';
 import StudentsRepository from '../repositories/students.repository.js';
 import { decrypt, encrypt } from '../utils/crypto.util.js';
+import { sendEmail } from '../utils/send-email.util.js';
 class GradesService {
   gradeRepository = new GradesRepository();
   studentRepository = new StudentsRepository();
@@ -37,7 +38,17 @@ class GradesService {
     }
     const studentId = gradesWithStudentId[0].studentId;
     const student = await this.studentRepository.getOneStudent(studentId);
-    const grades = await this.gradeRepository.createGrades(gradesWithStudentId, student.user.id);
+    const grades = await this.gradeRepository.createGrades(
+      gradesWithStudentId,
+      student.user.id,
+    );
+    sendEmail(
+      student.user.email,
+      '[성적 알림] 성적 입력이 완료되었습니다.',
+      `${student.user.name}님의 ${gradesWithStudentId[0].schoolYear}학년 ${gradesWithStudentId[0].semester}학기 성적 입력이 완료되었습니다.`,
+    ).catch((err) => {
+      console.error('이메일 전송 실패:', err);
+    });
     return grades;
   };
   // 성적 조회
@@ -122,7 +133,10 @@ class GradesService {
     }
     const studentId = gradesWithStudentId[0].studentId;
     const student = await this.studentRepository.getOneStudent(studentId);
-    const grades = await this.gradeRepository.updateGrades(gradesWithStudentId, student.user.id);
+    const grades = await this.gradeRepository.updateGrades(
+      gradesWithStudentId,
+      student.user.id,
+    );
     return grades;
   };
 

@@ -42,4 +42,29 @@ userRouter.patch(
   verifySchoolUser,
   userController.updateMyInfo,
 );
+
+// 인증 코드 확인
+userRouter.post(
+  '/find-password',
+  requireAccessToken(''),
+  verifySchoolUser,
+  userController.findMyPassword,
+);
+
+// 인증 코드 발송
+userRouter.get(
+  '/code',
+  requireAccessToken(''),
+  verifySchoolUser,
+  userController.sendFindMyPasswordCode,
+);
+
+// 새 비밀번호 설정
+userRouter.patch(
+  '/new-password',
+  requireAccessToken(''),
+  verifySchoolUser,
+  userController.setNewPassword,
+);
+
 export { userRouter };
