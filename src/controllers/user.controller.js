@@ -90,6 +90,64 @@ class UserController {
       next(err);
     }
   };
+
+  // 인증 코드 확인
+  findMyPassword = async (req, res, next) => {
+    try {
+      const { code } = req.body;
+      const email = req.user.email;
+      const data = await this.userService.findMyPassword(email, code);
+
+      return res.status(HTTP_STATUS.OK).json({
+        status: HTTP_STATUS.OK,
+        message: '인증 코드 확인 성공',
+        data,
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  // 인증 코드 발송
+  sendFindMyPasswordCode = async (req, res, next) => {
+    try {
+      const email = req.user.email;
+
+      const data = await this.userService.sendFindMyPasswordCode(email);
+
+      return res.status(HTTP_STATUS.OK).json({
+        status: HTTP_STATUS.OK,
+        message: '인증 코드 발송 성공',
+        data,
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  // 새 비밀번호 설정
+  setNewPassword = async (req, res, next) => {
+    try {
+      const { newPassword, newPasswordVerified } = req.body;
+      const email = req.user.email;
+      const userId = req.user.id;
+
+      const data = await this.userService.setNewPassword(
+        email,
+        newPassword,
+        newPasswordVerified,
+        userId,
+      );
+
+      return res.status(HTTP_STATUS.OK).json({
+        status: HTTP_STATUS.OK,
+        message: '새 비밀번호 설정 성공',
+        data,
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
 }
 
 export default UserController;

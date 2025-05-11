@@ -2,6 +2,7 @@ import { BadRequestError } from '../errors/http.error.js';
 import ConsultationRepository from '../repositories/consultation.repository.js';
 import StudentsRepository from '../repositories/students.repository.js';
 import TeacherRepository from '../repositories/teacher.repository.js';
+import { sendEmail } from '../utils/send-email.util.js';
 
 class ConsultationService {
   consultationRepository = new ConsultationRepository();
@@ -135,6 +136,13 @@ class ConsultationService {
       teacherId,
       existedStudent.user.id,
     );
+    sendEmail(
+      existedStudent.user.email,
+      '[상담 알림] 상담 입력이 완료되었습니다.',
+      `${existedStudent.user.name}님의 ${date}날의 상담 입력이 완료되었습니다.`,
+    ).catch((err) => {
+      console.error('이메일 전송 실패:', err);
+    });
     return data;
   };
 
