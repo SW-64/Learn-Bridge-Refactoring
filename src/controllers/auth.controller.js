@@ -8,38 +8,38 @@ class AuthController {
   // 회원가입
   signUp = async (req, res, next) => {
     try {
+      const schoolId = req.user.schoolId;
+
       const {
-        email,
         name,
         role,
-        password,
-        photo,
-        passwordCheck,
+        email,
+        phonenumber,
+        homenumber,
+        address,
         subject,
         grade,
-        number,
-        gradeClass,
-        schoolName,
       } = req.body;
 
       const data = await this.authService.signUp({
-        email,
         name,
         role,
-        password,
-        photo,
-        passwordCheck,
+        email,
+        phonenumber,
+        homenumber,
+        address,
         subject,
         grade,
-        number,
-        gradeClass,
-        schoolName,
+        schoolId,
       });
 
       return res.status(HTTP_STATUS.CREATED).json({
         status: HTTP_STATUS.CREATED,
         message: MESSAGES.AUTH.SIGN_UP.SUCCEED,
-        data,
+        data: {
+          ...data,
+          password: data.rawPassword,
+        },
       });
     } catch (error) {
       next(error);
@@ -49,9 +49,10 @@ class AuthController {
   // 로그인
   signIn = async (req, res, next) => {
     try {
-      const { email, password } = req.body;
+      const { loginId, password } = req.body;
 
-      const data = await this.authService.signIn({ email, password });
+      const data = await this.authService.signIn({ loginId, password });
+
       return res.status(HTTP_STATUS.OK).json({
         status: HTTP_STATUS.OK,
         message: MESSAGES.AUTH.SIGN_IN.SUCCEED,

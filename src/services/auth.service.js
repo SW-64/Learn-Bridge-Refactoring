@@ -25,20 +25,18 @@ class AuthService {
   classRepository = new ClassRepository();
 
   signUp = async ({
-    email,
     name,
     role,
-    password,
-    photo,
-    passwordCheck,
+    email,
+    phonenumber,
+    homenumber,
+    address,
     subject,
     grade,
-    number,
-    gradeClass,
-    schoolName,
+    schoolId,
   }) => {
     // 필요한 값을 받지 못할 때 에러 반환
-    if (!email || !name || !role || !password) {
+    if (!name || !role || !email) {
       throw new BadRequestError(MESSAGES.AUTH.SIGN_UP.NOT_ENOUGH_DATA);
     }
 
@@ -48,12 +46,12 @@ class AuthService {
       throw new ConflictError(MESSAGES.AUTH.COMMON.EMAIL.DUPLICATED);
     }
 
-    //비밀번호와 비밀번호 확인이 맞지않다면 에러 반환
-    if (password !== passwordCheck) {
-      throw new ConflictError(
-        MESSAGES.AUTH.COMMON.PASSWORD_CHECK.NOT_MATCHTED_WITH_PASSWORD,
-      );
-    }
+    // //비밀번호와 비밀번호 확인이 맞지않다면 에러 반환
+    // if (password !== passwordCheck) {
+    //   throw new ConflictError(
+    //     MESSAGES.AUTH.COMMON.PASSWORD_CHECK.NOT_MATCHTED_WITH_PASSWORD,
+    //   );
+    // }
 
     // 학생이 과목을 작성할려는 경우 에러 반환
     if (role == 'STUDENT' && subject) {
@@ -61,47 +59,55 @@ class AuthService {
     }
 
     // 선생님이 학년, 반, 출석번호를 작성하려는 경우 에러 반환
-    if (role == 'TEACHER' && (grade || number || gradeClass)) {
+    if (role == 'TEACHER' && (grade || phonenumber || homenumber || address)) {
       throw new BadRequestError(MESSAGES.AUTH.SIGN_UP.TEACHER_INVALID);
     }
 
-    // 해당 학교명이 데이터에 없다면 에러 반환
-    const existedSchool =
-      await this.schoolRepository.findSchoolBySchoolName(schoolName);
-    if (!existedSchool) throw new NotFoundError('해당되는 학교가 없습니다.');
+    // // 해당 학교명이 데이터에 없다면 에러 반환
+    // const existedSchool =
+    //   await this.schoolRepository.findSchoolBySchoolName(schoolName);
+    // if (!existedSchool) throw new NotFoundError('해당되는 학교가 없습니다.');
 
-    // schoolRepository에서 값을 배열로 받아 오기 때문에 인덱스로 단일 값만 받아옴
-    const school = existedSchool[0];
-    const schoolId = school.schoolId;
+    // // schoolRepository에서 값을 배열로 받아 오기 때문에 인덱스로 단일 값만 받아옴
+    // const school = existedSchool[0];
+    // const schoolId = school.schoolId;
 
-    // 반 데이터에서 id 가져오기
-    const classId =
-      role === 'STUDENT'
-        ? ((await this.userRepository.findClass(grade, gradeClass))?.classId ??
-          (() => {
-            throw new NotFoundError('해당 반이 존재하지 않습니다.');
-          })())
-        : null;
+    // // 반 데이터에서 id 가져오기
+    // const classId =
+    //   role === 'STUDENT'
+    //     ? ((await this.userRepository.findClass(grade, gradeClass))?.classId ??
+    //       (() => {
+    //         throw new NotFoundError('해당 반이 존재하지 않습니다.');
+    //       })())
+    //     : null;
+
+    const generateRandomPassword = () => {
+      return String(Math.floor(100000 + Math.random() * 900000)); // 6자리 숫자
+    };
+
+    const rawPassword = generateRandomPassword();
 
     const data = await this.authRepository.create({
-      email,
       name,
       role,
-      password,
-      photo,
+      email,
+      phonenumber,
+      homenumber,
+      address,
       subject,
       grade,
-      number,
-      gradeClass,
       schoolId,
-      classId,
+      rawPassword,
     });
 
-    return data;
+    return {
+      ...data,
+      rawPassword,
+    };
   };
 
-  signIn = async ({ email, password }) => {
-    const user = await this.authRepository.findUserByEmail(email);
+  signIn = async ({ loginId, password }) => {
+    const user = await this.authRepository.findUserByLoginId(loginId);
     console.log(user);
     const passwordCheck = user && bcrypt.compareSync(password, user.password);
 

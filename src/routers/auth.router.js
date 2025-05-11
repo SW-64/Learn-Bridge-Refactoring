@@ -14,7 +14,7 @@ const authService = new AuthService(authRepository);
 const authController = new AuthController(authService);
 
 // 회원가입
-authRouter.post('/sign-up', authController.signUp);
+authRouter.post('/sign-up', requireAccessToken('ADMIN'), authController.signUp);
 
 // 로그인
 authRouter.post('/sign-in', authController.signIn);

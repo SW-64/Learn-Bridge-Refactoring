@@ -17,9 +17,10 @@ datasource db {
 model User {
     id           Int            @id @default(autoincrement())
     schoolId     Int            @map("school_id")
+    loginId      String?        @map("login_id") @unique
     name         String?
     role         UserRole?
-    email        String         @unique
+    email        String?        @unique
     password     String?
     photo        String?
     createdAt    DateTime       @default(now()) @map("created_at")
@@ -49,10 +50,13 @@ model Teacher {
 model Student {
     studentId  Int      @id @default(autoincrement()) @map("student_id")
     userId     Int      @unique @map("user_id")
-    classId    Int      @map("class_id")
+    classId    Int?      @map("class_id")
     grade      Int
-    gradeClass Int
-    number     Int
+    gradeClass Int?
+    number     Int?
+    phonenumber String?
+    homenumber String?
+    address    String?
     createdAt  DateTime @default(now()) @map("created_at")
 
     user          User            @relation(fields: [userId], references: [id])
@@ -61,7 +65,7 @@ model Student {
     Grade         Grade[]
     Consultation  Consultation[]
     Feedback      Feedback[]
-    class         Class           @relation(fields: [classId], references: [classId])
+    class         Class?           @relation(fields: [classId], references: [classId])
 
     @@map("students")
 }
@@ -117,13 +121,13 @@ model School {
 
 model Class {
     classId    Int      @id @default(autoincrement()) @map("class_id")
-    teacherId  Int      @unique @map("teacher_id")
+    teacherId  Int?     @unique @map("teacher_id")
     grade      Int
     gradeClass Int
     created_at DateTime @default(now()) @map("created_at")
     updated_at DateTime @updatedAt @map("updated_at")
 
-    teacher Teacher   @relation(fields: [teacherId], references: [teacherId])
+    teacher Teacher?   @relation(fields: [teacherId], references: [teacherId])
     student Student[]
 
     @@map("class")
@@ -206,6 +210,8 @@ model Notification {
 enum UserRole {
     TEACHER
     STUDENT
+    PARENT
+    ADMIN
 }
 
 enum AttendanceType {
