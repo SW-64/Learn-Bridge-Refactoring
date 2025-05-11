@@ -106,8 +106,8 @@ class AuthService {
     };
   };
 
-  signIn = async ({ email, password }) => {
-    const user = await this.authRepository.findUserByEmail(email);
+  signIn = async ({ loginId, password }) => {
+    const user = await this.authRepository.findUserByLoginId(loginId);
     console.log(user);
     const passwordCheck = user && bcrypt.compareSync(password, user.password);
 
