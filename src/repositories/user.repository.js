@@ -94,5 +94,13 @@ class UserRepository {
     });
     return user;
   };
+
+  // 이메일로 유저 조회
+  getUserByEmail = async (email) => {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+    return user;
+  };
 }
 export default UserRepository;
