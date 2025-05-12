@@ -25,6 +25,26 @@ class StudentsController {
     }
   };
 
+  // 반이 없는 학생 목록 조회
+  getNoClassStudent = async (req, res, next) => {
+    try {
+      const { classId, schoolId } = req.params;
+
+      const data = await this.studentsService.getNoClassStudent(
+        +classId,
+        +schoolId,
+      );
+
+      return res.status(HTTP_STATUS.OK).json({
+        status: HTTP_STATUS.OK,
+        message: '반이 없는 학생 목록 조회 성공',
+        data,
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+
   //특정 학생 상세 조회
   getOneStudent = async (req, res, next) => {
     try {
