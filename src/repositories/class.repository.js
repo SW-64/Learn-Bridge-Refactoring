@@ -86,15 +86,23 @@ class ClassRepository {
     return data;
   };
 
-  // 반 생성
-  createClass = async (grade, gradeClass, teacherId) => {
-    const data = await prisma.class.create({
-      data: {
-        grade,
-        gradeClass,
-        //반 테이블과 교사 테이블을 연결
-        teacherId,
-      },
+  // // 반 생성
+  // createClass = async (grade, gradeClass, teacherId) => {
+  //   const data = await prisma.class.create({
+  //     data: {
+  //       grade,
+  //       gradeClass,
+  //       //반 테이블과 교사 테이블을 연결
+  //       teacherId,
+  //     },
+  //   });
+  //   return data;
+  // };
+
+  // 반 일괄 생성
+  createClass = async (classList) => {
+    const data = await prisma.class.createMany({
+      data: classList,
     });
     return data;
   };

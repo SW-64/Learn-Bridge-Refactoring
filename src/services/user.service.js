@@ -16,34 +16,52 @@ class UserService {
   teacherRepository = new TeacherRepository();
   schoolRepository = new SchoolRepository();
   classRepository = new ClassRepository();
-  // 담임 설정 및 반 생성
-  assignHomeRoom = async (grade, gradeClass, userId, schoolId) => {
-    // 반에 담임이 이미 존재한다면, 교체
-    const existedClass = await this.classRepository.findClassByGradeAndClass(
-      grade,
-      gradeClass,
-      schoolId,
-    );
-    // 유저 id로 선생 id를 가져오기
-    const teacher = await this.teacherRepository.findTeacherByUserId(userId);
-    const teacherId = teacher.teacherId;
+  // // 담임 설정 및 반 생성
+  // assignHomeRoom = async (grade, gradeClass, userId, schoolId) => {
+  //   // 반에 담임이 이미 존재한다면, 교체
+  //   const existedClass = await this.classRepository.findClassByGradeAndClass(
+  //     grade,
+  //     gradeClass,
+  //     schoolId,
+  //   );
+  //   // 유저 id로 선생 id를 가져오기
+  //   const teacher = await this.teacherRepository.findTeacherByUserId(userId);
+  //   const teacherId = teacher.teacherId;
 
-    if (existedClass) {
-      const originalTeacherId = existedClass.teacherId;
-      const data = await this.classRepository.updateHomeroom(
-        existedClass.classId,
-        originalTeacherId,
-        teacherId,
-      );
-      return data;
+  //   if (existedClass) {
+  //     const originalTeacherId = existedClass.teacherId;
+  //     const data = await this.classRepository.updateHomeroom(
+  //       existedClass.classId,
+  //       originalTeacherId,
+  //       teacherId,
+  //     );
+  //     return data;
+  //   }
+
+  //   const setHomeroom = await this.teacherRepository.setHomeroom(teacherId);
+  //   const data = await this.classRepository.createClass(
+  //     grade,
+  //     gradeClass,
+  //     teacherId,
+  //   );
+  //   return data;
+  // };
+
+  // 반 생성 (반 초기화)
+  createClasses = async ({ grade1, grade2, grade3 }) => {
+    const allClassData = [];
+
+    for (let grade = 1; grade <= 3; grade++) {
+      const count = grade === 1 ? grade1 : grade === 2 ? grade2 : grade3;
+
+      for (let i = 1; i <= count; i++) {
+        allClassData.push({
+          grade,
+          gradeClass: i,
+        });
+      }
     }
-
-    const setHomeroom = await this.teacherRepository.setHomeroom(teacherId);
-    const data = await this.classRepository.createClass(
-      grade,
-      gradeClass,
-      teacherId,
-    );
+    const data = await this.classRepository.createClass(allClassData);
     return data;
   };
 
@@ -190,5 +208,4 @@ class UserService {
     return;
   };
 }
-
 export default UserService;

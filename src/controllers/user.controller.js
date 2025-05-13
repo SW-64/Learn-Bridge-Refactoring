@@ -28,6 +28,30 @@ class UserController {
   //   }
   // };
 
+  // 반 일괄 생성
+  createClasses = async (req, res, next) => {
+    try {
+      const { grade1, grade2, grade3 } = req.body;
+      const schoolId = req.user.schoolId;
+
+      const data = await this.userService.createClasses({
+        grade1,
+        grade2,
+        grade3,
+        schoolId,
+      });
+
+      return res.status(201).json({
+        status: 201,
+        message: '반이 성공적으로 생성되었습니다.',
+        data,
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  // 교사 목록 조회
   getTeachers = async (req, res, next) => {
     try {
       const { classId } = req.params;
