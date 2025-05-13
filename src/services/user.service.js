@@ -9,6 +9,8 @@ import ClassRepository from '../repositories/class.repository.js';
 import { getRandomCode } from '../utils/random-code.util.js';
 import { sendEmail } from '../utils/send-email.util.js';
 import redis from '../utils/redis.util.js';
+import { prisma } from '../utils/prisma.utils.js';
+
 class UserService {
   userRepository = new UserRepository();
   teacherRepository = new TeacherRepository();
@@ -44,6 +46,63 @@ class UserService {
     );
     return data;
   };
+
+  // 교사 목록 조회
+  getHomeroomInfo = async (classId, schoolId) => {
+    const classData = await this.classRepository.findClassByClassId(classId);
+    const noClassData =
+      await this.teacherRepository.getAvailableTeachers(schoolId);
+    const homeroom = classData?.teacher || null;
+    const notHomeroom = noClassData || null;
+
+    return {
+      homeroom,
+      notHomeroom,
+    };
+  };
+
+  // 반 구성원 저장
+  manageClassStudent = async ({
+    classId,
+    addedStudentIds,
+    removedStudentIds,
+  }) => {
+    await prisma.$transaction(async (tx) => {
+      // 학생 추가
+      if (addedStudentIds?.length) {
+        await this.classRepository.assignStudentsToClass(
+          tx,
+          classId,
+          addedStudentIds,
+        );
+      }
+      // 학생 제거
+      if (removedStudentIds?.length) {
+        await this.classRepository.removeStudentsFromClass(
+          tx,
+          classId,
+          removedStudentIds,
+        );
+      }
+    });
+  };
+
+  // 반 교사 저장
+  manageClassTeacher = async ({ classId, newHomeroomTeacherId }) => {
+    await prisma.$transaction(async (tx) => {
+      // 기존 담임 해제
+      await this.classRepository.resetHomeroomTeacher(tx, classId);
+      // 새 담임 교사 연결
+      if (newHomeroomTeacherId) {
+        await this.classRepository.setNewHomeroomTeacher(
+          tx,
+          classId,
+          newHomeroomTeacherId,
+        );
+      }
+    });
+  };
+
   // 내 정보 조회
   getMyInfo = async (userId, userRole) => {
     const user = await this.userRepository.getUserById(userId, userRole);

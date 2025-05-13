@@ -7,6 +7,22 @@ class ClassRepository {
       where: {
         classId,
       },
+      include: {
+        teacher: {
+          select: {
+            teacherId: true,
+            subject: true,
+            isHomeroom: true,
+            user: {
+              select: {
+                name: true,
+                loginId: true,
+                email: true,
+              },
+            },
+          },
+        },
+      },
     });
     return data;
   };
@@ -81,6 +97,53 @@ class ClassRepository {
       },
     });
     return data;
+  };
+
+  // 학생들 반에 배정
+  assignStudentsToClass = async (tx, classId, addedStudentIds) => {
+    await tx.student.updateMany({
+      where: { studentId: { in: addedStudentIds } },
+      data: { classId },
+    });
+  };
+
+  // 반에서 학생 제거
+  removeStudentsFromClass = async (tx, classId, removedStudentIds) => {
+    await tx.student.updateMany({
+      where: {
+        studentId: { in: removedStudentIds },
+        classId,
+      },
+      data: { classId: null },
+    });
+  };
+
+  // 기존 담임 비활성화
+  resetHomeroomTeacher = async (tx, classId) => {
+    await tx.teacher.updateMany({
+      where: {
+        isHomeroom: true,
+        class: { classId },
+      },
+      data: { isHomeroom: false },
+    });
+  };
+
+  // 새 담임 배정 + class 테이블 갱신
+  setNewHomeroomTeacher = async (tx, classId, teacherId) => {
+    await tx.teacher.update({
+      where: { teacherId },
+      data: { isHomeroom: true },
+    });
+
+    await tx.class.update({
+      where: { classId },
+      data: {
+        teacher: {
+          connect: { teacherId },
+        },
+      },
+    });
   };
 }
 
