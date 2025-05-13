@@ -19,6 +19,33 @@ class StudentsRepository {
           select: {
             name: true,
             schoolId: true,
+            loginId: true,
+          },
+        },
+      },
+    });
+    return students;
+  };
+
+  //반이 없는 학생 목록 조회
+  getNoClassStudent = async (classId, schoolId) => {
+    const students = await prisma.student.findMany({
+      where: {
+        classId: null,
+        user: {
+          schoolId,
+        },
+      },
+      select: {
+        studentId: true,
+        grade: true,
+        number: true,
+        gradeClass: true,
+        user: {
+          select: {
+            name: true,
+            schoolId: true,
+            loginId: true,
           },
         },
       },

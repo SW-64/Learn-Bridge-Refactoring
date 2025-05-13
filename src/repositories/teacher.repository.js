@@ -26,6 +26,30 @@ class TeacherRepository {
     });
     return data;
   };
+
+  // 추가 가능한 교사 조회 (isHomeroom = false)
+  getAvailableTeachers = async (schoolId) => {
+    const data = await prisma.teacher.findMany({
+      where: {
+        isHomeroom: false,
+        user: {
+          schoolId,
+        },
+      },
+      select: {
+        teacherId: true,
+        subject: true,
+        user: {
+          select: {
+            name: true,
+            loginId: true,
+            email: true,
+          },
+        },
+      },
+    });
+    return data;
+  };
 }
 
 export default TeacherRepository;

@@ -15,6 +15,15 @@ class StudentsService {
     return data;
   };
 
+  //반이 없는 학생 목록 조회
+  getNoClassStudent = async (classId, schoolId) => {
+    const data = await this.studentsRepository.getNoClassStudent(
+      classId,
+      schoolId,
+    );
+    return data;
+  };
+
   //특정 학생 상세 조회 , 유효성 검사
   getOneStudent = async (studentId) => {
     const student = await this.studentsRepository.getOneStudent(studentId);
