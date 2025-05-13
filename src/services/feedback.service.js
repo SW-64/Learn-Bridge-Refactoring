@@ -68,6 +68,9 @@ class FeedbackService {
           `카테고리가 없거나 유효하지 않은 카테고리입니다: ${item.category}`,
         );
       }
+      if (!item.updatedAt) {
+        throw new BadRequestError(`업데이트 날짜가 없습니다: ${item.category}`);
+      }
     }
 
     const hasRequiredData = studentId && feedback && schoolYear;

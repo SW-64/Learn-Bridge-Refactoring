@@ -103,9 +103,18 @@ class GradesService {
   // 성적 수정
   updateGrades = async (gradesWithStudentId) => {
     // 유효성 검사
+    console.log(gradesWithStudentId);
     for (const item of gradesWithStudentId) {
-      const { schoolYear, semester, subject, score, studentId } = item;
-      if (!schoolYear || !semester || !subject || !score || !studentId) {
+      const { schoolYear, semester, subject, score, studentId, updatedAt } =
+        item;
+      if (
+        !schoolYear ||
+        !semester ||
+        !subject ||
+        !score ||
+        !studentId ||
+        !updatedAt
+      ) {
         throw new NotFoundError('값을 불러오지 못했습니다.');
       }
       const encryptedGrades = encrypt(score);
