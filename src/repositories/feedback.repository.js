@@ -13,38 +13,49 @@ class FeedbackRepository {
       data: feedbackWithMeta,
     });
     const notification = await prisma.notification.create({
-      data : {
+      data: {
         userId: studentUserId,
-        type:"FEEDBACK",
-        message: `${schoolYear}학년 생성`
-      }
-    })
+        type: 'FEEDBACK',
+        message: `${schoolYear}학년 생성`,
+      },
+    });
     return createdFeedback;
   };
   // 피드백 수정
   updateFeedback = async (studentId, feedback, schoolYear, studentUserId) => {
-    const updates = feedback.map((item) =>
-      prisma.feedback.updateMany({
-        where: {
-          studentId,
-          schoolYear,
-          category: item.category, // 각 카테고리에 해당하는 항목만 수정
-        },
-        data: {
-          content: item.content,
-          // category는 enum 필드이므로 수정 필요 없다면 제외
-        },
-      }),
-    );
-    const notification = await prisma.notification.create({
-      data : {
-        userId: studentUserId,
-        type:"FEEDBACK",
-        message: `${schoolYear}학년 생성`
+    await prisma.$transaction(async (tx) => {
+      const results = await Promise.all(
+        feedback.map((item) =>
+          tx.feedback.updateMany({
+            where: {
+              studentId,
+              schoolYear,
+              category: item.category,
+              updatedAt: item.updatedAt, // 낙관적 락용
+            },
+            data: {
+              content: item.content,
+            },
+          }),
+        ),
+      );
+      console.log(results);
+      //  하나라도 수정되지 않았다면 트랜잭션 전체 취소
+      const failed = results.find((res) => res.count === 0);
+      if (failed) {
+        throw new Error('다른 탭 혹은 창에서 이미 수정되었습니다.');
       }
-    })
-    const results = await Promise.all(updates);
-    return results;
+    });
+
+    const notification = await prisma.notification.create({
+      data: {
+        userId: studentUserId,
+        type: 'FEEDBACK',
+        message: `${schoolYear}학년 생성`,
+      },
+    });
+
+    return;
   };
   // 피드백 조회
   getFeedback = async (schoolYear, studentId) => {
