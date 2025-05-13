@@ -7,6 +7,22 @@ class ClassRepository {
       where: {
         classId,
       },
+      include: {
+        teacher: {
+          select: {
+            teacherId: true,
+            subject: true,
+            isHomeroom: true,
+            user: {
+              select: {
+                name: true,
+                loginId: true,
+                email: true,
+              },
+            },
+          },
+        },
+      },
     });
     return data;
   };
@@ -70,17 +86,72 @@ class ClassRepository {
     return data;
   };
 
-  // 반 생성
-  createClass = async (grade, gradeClass, teacherId) => {
-    const data = await prisma.class.create({
-      data: {
-        grade,
-        gradeClass,
-        //반 테이블과 교사 테이블을 연결
-        teacherId,
-      },
+  // // 반 생성
+  // createClass = async (grade, gradeClass, teacherId) => {
+  //   const data = await prisma.class.create({
+  //     data: {
+  //       grade,
+  //       gradeClass,
+  //       //반 테이블과 교사 테이블을 연결
+  //       teacherId,
+  //     },
+  //   });
+  //   return data;
+  // };
+
+  // 반 일괄 생성
+  createClass = async (classList) => {
+    const data = await prisma.class.createMany({
+      data: classList,
     });
     return data;
+  };
+
+  // 학생들 반에 배정
+  assignStudentsToClass = async (tx, classId, addedStudentIds) => {
+    await tx.student.updateMany({
+      where: { studentId: { in: addedStudentIds } },
+      data: { classId },
+    });
+  };
+
+  // 반에서 학생 제거
+  removeStudentsFromClass = async (tx, classId, removedStudentIds) => {
+    await tx.student.updateMany({
+      where: {
+        studentId: { in: removedStudentIds },
+        classId,
+      },
+      data: { classId: null },
+    });
+  };
+
+  // 기존 담임 비활성화
+  resetHomeroomTeacher = async (tx, classId) => {
+    await tx.teacher.updateMany({
+      where: {
+        isHomeroom: true,
+        class: { classId },
+      },
+      data: { isHomeroom: false },
+    });
+  };
+
+  // 새 담임 배정 + class 테이블 갱신
+  setNewHomeroomTeacher = async (tx, classId, teacherId) => {
+    await tx.teacher.update({
+      where: { teacherId },
+      data: { isHomeroom: true },
+    });
+
+    await tx.class.update({
+      where: { classId },
+      data: {
+        teacher: {
+          connect: { teacherId },
+        },
+      },
+    });
   };
 }
 
