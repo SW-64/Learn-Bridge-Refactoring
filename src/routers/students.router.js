@@ -15,7 +15,7 @@ const studentsController = new StudentsController(studentsService);
 // 반 학생 목록 조회
 studentsRouter.get(
   '/class/:classId/students',
-  requireAccessToken('TEACHER', 'ADMIN'),
+  requireAccessToken(''),
   verifySchoolUser,
   //verifyHomeroomTeacher,
   studentsController.getClassStudent,
@@ -23,7 +23,7 @@ studentsRouter.get(
 
 // 반이 없는 학생 목록 조회
 studentsRouter.get(
-  '/class/:classId/students',
+  '/students/unassigned',
   requireAccessToken('ADMIN'),
   verifySchoolUser,
   studentsController.getNoClassStudent,

@@ -40,11 +40,11 @@ class AuthService {
       throw new BadRequestError(MESSAGES.AUTH.SIGN_UP.NOT_ENOUGH_DATA);
     }
 
-    // 이메일이 이미 존재한다면 에러 반환
-    const existedUser = await this.authRepository.findUserByEmail(email);
-    if (existedUser) {
-      throw new ConflictError(MESSAGES.AUTH.COMMON.EMAIL.DUPLICATED);
-    }
+    // // 이메일이 이미 존재한다면 에러 반환
+    // const existedUser = await this.authRepository.findUserByEmail(email);
+    // if (existedUser) {
+    //   throw new ConflictError(MESSAGES.AUTH.COMMON.EMAIL.DUPLICATED);
+    // }
 
     // //비밀번호와 비밀번호 확인이 맞지않다면 에러 반환
     // if (password !== passwordCheck) {
