@@ -1,3 +1,4 @@
+import { BadRequestError } from '../errors/http.error.js';
 import { prisma } from '../utils/prisma.utils.js';
 
 class FeedbackRepository {
@@ -43,7 +44,7 @@ class FeedbackRepository {
       //  하나라도 수정되지 않았다면 트랜잭션 전체 취소
       const failed = results.find((res) => res.count === 0);
       if (failed) {
-        throw new Error('다른 탭 혹은 창에서 이미 수정되었습니다.');
+        throw new BadRequestError('다른 탭 혹은 창에서 이미 수정되었습니다.');
       }
     });
 
