@@ -17,12 +17,16 @@ import { MESSAGES } from '../constants/message.constant.js';
 import SchoolRepository from '../repositories/school.repository.js';
 import UserRepository from '../repositories/user.repository.js';
 import ClassRepository from '../repositories/class.repository.js';
+import ParentsRepository from '../repositories/parents.repository.js';
+import StudentsRepository from '../repositories/students.repository.js';
 
 class AuthService {
   authRepository = new AuthRepository();
   schoolRepository = new SchoolRepository();
   userRepository = new UserRepository();
   classRepository = new ClassRepository();
+  parentsRepository = new ParentsRepository();
+  StudentsRepository = new StudentsRepository();
 
   signUp = async ({
     name,
@@ -96,6 +100,26 @@ class AuthService {
       address,
       subject,
       grade,
+      schoolId,
+      rawPassword,
+    });
+
+    return {
+      ...data,
+      rawPassword,
+    };
+  };
+
+  // 학부모 회원가입
+  parentsSignUp = async ({ loginId, schoolId }) => {
+    const generateRandomPassword = () => {
+      return String(Math.floor(100000 + Math.random() * 900000)); // 6자리 숫자
+    };
+
+    const rawPassword = generateRandomPassword();
+
+    const data = await this.parentsRepository.createParents({
+      loginId,
       schoolId,
       rawPassword,
     });

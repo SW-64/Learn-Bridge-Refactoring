@@ -46,6 +46,31 @@ class AuthController {
     }
   };
 
+  // 학부모 회원가입
+  parentsSignUp = async (req, res, next) => {
+    try {
+      const { loginId, schoolId } = req.user;
+      console.log('loginId:', loginId, typeof loginId);
+      console.log('schoolId:', schoolId, typeof schoolId);
+
+      const data = await this.authService.parentsSignUp({
+        loginId,
+        schoolId,
+      });
+
+      return res.status(HTTP_STATUS.CREATED).json({
+        status: HTTP_STATUS.CREATED,
+        message: MESSAGES.AUTH.SIGN_UP.SUCCEED,
+        data: {
+          ...data,
+          password: data.rawPassword,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   // 로그인
   signIn = async (req, res, next) => {
     try {
