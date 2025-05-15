@@ -16,6 +16,13 @@ const authController = new AuthController(authService);
 // 회원가입
 authRouter.post('/sign-up', requireAccessToken('ADMIN'), authController.signUp);
 
+// 학부모 회원가입
+authRouter.post(
+  '/parents-sign-up',
+  requireAccessToken('STUDENT'),
+  authController.parentsSignUp,
+);
+
 // 로그인
 authRouter.post('/sign-in', authController.signIn);
 

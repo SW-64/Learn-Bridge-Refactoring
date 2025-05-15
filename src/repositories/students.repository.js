@@ -185,6 +185,14 @@ class StudentsRepository {
     });
     return student;
   };
+
+  // 학부모 - 학생 테이블 연결
+  updateParentId = async ({ userId, parentsId }) => {
+    await prisma.student.update({
+      where: { userId }, // 현재 로그인한 유저의 id
+      data: { parentsId },
+    });
+  };
 }
 
 export default StudentsRepository;

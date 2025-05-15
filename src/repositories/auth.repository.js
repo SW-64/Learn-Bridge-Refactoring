@@ -41,11 +41,9 @@ class AuthRepository {
           ...(role === 'STUDENT' && {
             student: {
               create: {
-                grade,
                 phonenumber,
                 homenumber,
                 address,
-                gradeClass: null,
                 number: null,
                 classId: null,
               },
