@@ -111,7 +111,7 @@ class AuthService {
   };
 
   // 학부모 회원가입
-  parentsSignUp = async ({ loginId, schoolId }) => {
+  parentsSignUp = async ({ loginId, schoolId, userId }) => {
     const generateRandomPassword = () => {
       return String(Math.floor(100000 + Math.random() * 900000)); // 6자리 숫자
     };
@@ -122,6 +122,11 @@ class AuthService {
       loginId,
       schoolId,
       rawPassword,
+    });
+
+    await this.StudentsRepository.updateParentId({
+      userId,
+      parentsId: data.Parents.parentsId,
     });
 
     return {

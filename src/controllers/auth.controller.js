@@ -49,13 +49,14 @@ class AuthController {
   // 학부모 회원가입
   parentsSignUp = async (req, res, next) => {
     try {
-      const { loginId, schoolId } = req.user;
+      const { loginId, schoolId, id: userId } = req.user;
       console.log('loginId:', loginId, typeof loginId);
       console.log('schoolId:', schoolId, typeof schoolId);
 
       const data = await this.authService.parentsSignUp({
         loginId,
         schoolId,
+        userId,
       });
 
       return res.status(HTTP_STATUS.CREATED).json({

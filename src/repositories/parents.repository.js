@@ -12,7 +12,7 @@ class ParentsRepository {
     );
     const loginIdStr = String(loginId);
 
-    await prisma.user.create({
+    const data = await prisma.user.create({
       data: {
         loginId: `${loginIdStr}p`,
         password: hashedPassword,
@@ -22,7 +22,11 @@ class ParentsRepository {
         },
         schoolId,
       },
+      include: {
+        Parents: true,
+      },
     });
+    return data;
   };
 }
 
