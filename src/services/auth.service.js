@@ -1,6 +1,9 @@
 import AuthRepository from '../repositories/auth.repository.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import hangul from 'hangul-js';
+const disassemble = hangul.disassemble;
+
 import {
   ConflictError,
   UnauthorizedError,
@@ -19,6 +22,7 @@ import UserRepository from '../repositories/user.repository.js';
 import ClassRepository from '../repositories/class.repository.js';
 import ParentsRepository from '../repositories/parents.repository.js';
 import StudentsRepository from '../repositories/students.repository.js';
+import { text } from 'express';
 
 class AuthService {
   authRepository = new AuthRepository();
@@ -111,12 +115,51 @@ class AuthService {
   };
 
   // 학부모 회원가입
-  parentsSignUp = async ({ loginId, schoolId, userId }) => {
-    const generateRandomPassword = () => {
-      return String(Math.floor(100000 + Math.random() * 900000)); // 6자리 숫자
+  parentsSignUp = async ({ loginId, schoolId, userId, name }) => {
+    const hangulToQwerty = {
+      ㄱ: 'r',
+      ㄲ: 'R',
+      ㄴ: 's',
+      ㄷ: 'e',
+      ㄸ: 'E',
+      ㄹ: 'f',
+      ㅁ: 'a',
+      ㅂ: 'q',
+      ㅃ: 'Q',
+      ㅅ: 't',
+      ㅆ: 'T',
+      ㅇ: 'd',
+      ㅈ: 'w',
+      ㅉ: 'W',
+      ㅊ: 'c',
+      ㅋ: 'z',
+      ㅌ: 'x',
+      ㅍ: 'v',
+      ㅎ: 'g',
+      ㅏ: 'k',
+      ㅐ: 'o',
+      ㅑ: 'i',
+      ㅒ: 'O',
+      ㅓ: 'j',
+      ㅔ: 'p',
+      ㅕ: 'u',
+      ㅖ: 'P',
+      ㅗ: 'h',
+      ㅛ: 'y',
+      ㅜ: 'n',
+      ㅠ: 'b',
+      ㅡ: 'm',
+      ㅣ: 'l',
     };
 
-    const rawPassword = generateRandomPassword();
+    const koreanToKeyboard = (text) => {
+      const jamos = disassemble(text, true).flat(); //
+      return jamos.map((char) => hangulToQwerty[char] || '').join('');
+    };
+    const rawPassword = koreanToKeyboard(name);
+
+    console.log('📛 원본 이름:', name);
+    console.log('🔐 변환된 비밀번호:', rawPassword);
 
     const data = await this.parentsRepository.createParents({
       loginId,
