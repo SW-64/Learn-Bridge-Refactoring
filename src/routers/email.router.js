@@ -13,7 +13,7 @@ const emailController = new EmailController(emailService);
 emailRouter.post('/find-password', emailController.findMyPassword);
 
 // 인증 코드 발송
-emailRouter.get('/code', emailController.sendFindMyPasswordCode);
+emailRouter.post('/code', emailController.sendFindMyPasswordCode);
 
 // 새 비밀번호 설정
 emailRouter.patch('/new-password', emailController.setNewPassword);
