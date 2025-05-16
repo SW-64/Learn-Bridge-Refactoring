@@ -21,6 +21,7 @@ model User {
     name         String?
     role         UserRole?
     email        String?        @unique
+    kakaoEmail   String?        @unique
     password     String?
     photo        String?
     createdAt    DateTime       @default(now()) @map("created_at")
@@ -54,6 +55,8 @@ model Student {
     classId     Int?     @map("class_id")
     parentsId   Int?     @unique @map("parents_id")
     number      Int?
+    grade       Int?
+    gradeClass  Int?
     phonenumber String?
     homenumber  String?
     address     String?
