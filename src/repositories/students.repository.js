@@ -12,9 +12,7 @@ class StudentsRepository {
       },
       select: {
         studentId: true,
-        grade: true,
         number: true,
-        gradeClass: true,
         user: {
           select: {
             name: true,
@@ -38,9 +36,7 @@ class StudentsRepository {
       },
       select: {
         studentId: true,
-        grade: true,
         number: true,
-        gradeClass: true,
         user: {
           select: {
             name: true,
