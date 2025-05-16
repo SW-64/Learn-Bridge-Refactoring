@@ -8,6 +8,7 @@ import { consultationRouter } from './consultation.router.js';
 import { schoolRouter } from './school.router.js';
 import { userRouter } from './user.router.js';
 import { notificationRouter } from './notification.router.js';
+import { emailRouter } from './email.router.js';
 
 const apiRouter = express.Router();
 
@@ -37,4 +38,7 @@ apiRouter.use('/api/v1/school', schoolRouter);
 
 // 알림 라우터
 apiRouter.use('/api/v1/school/:schoolId/notifications', notificationRouter);
+
+// 이메일 라우터
+apiRouter.use('/api/v1/email', emailRouter);
 export { apiRouter };

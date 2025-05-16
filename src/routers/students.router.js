@@ -15,10 +15,18 @@ const studentsController = new StudentsController(studentsService);
 // 반 학생 목록 조회
 studentsRouter.get(
   '/class/:classId/students',
-  requireAccessToken('TEACHER'),
-  verifySchoolUser,
-  verifyHomeroomTeacher,
+  //requireAccessToken(''),
+  //verifySchoolUser,
+  //verifyHomeroomTeacher,
   studentsController.getClassStudent,
+);
+
+// 반이 없는 학생 목록 조회
+studentsRouter.get(
+  '/students/unassigned',
+  requireAccessToken('ADMIN'),
+  verifySchoolUser,
+  studentsController.getNoClassStudent,
 );
 
 // 특정 학생 상세 조회

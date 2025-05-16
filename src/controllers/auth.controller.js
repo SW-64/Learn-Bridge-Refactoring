@@ -8,38 +8,65 @@ class AuthController {
   // 회원가입
   signUp = async (req, res, next) => {
     try {
+      const schoolId = req.user.schoolId;
+
       const {
-        email,
         name,
         role,
-        password,
-        photo,
-        passwordCheck,
+        email,
+        phonenumber,
+        homenumber,
+        address,
         subject,
         grade,
-        number,
-        gradeClass,
-        schoolName,
       } = req.body;
 
       const data = await this.authService.signUp({
-        email,
         name,
         role,
-        password,
-        photo,
-        passwordCheck,
+        email,
+        phonenumber,
+        homenumber,
+        address,
         subject,
         grade,
-        number,
-        gradeClass,
-        schoolName,
+        schoolId,
       });
 
       return res.status(HTTP_STATUS.CREATED).json({
         status: HTTP_STATUS.CREATED,
         message: MESSAGES.AUTH.SIGN_UP.SUCCEED,
-        data,
+        data: {
+          ...data,
+          password: data.rawPassword,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  // 학부모 회원가입
+  parentsSignUp = async (req, res, next) => {
+    try {
+      const { loginId, schoolId, id: userId, name } = req.user;
+      console.log('loginId:', loginId, typeof loginId);
+      console.log('schoolId:', schoolId, typeof schoolId);
+
+      const data = await this.authService.parentsSignUp({
+        loginId,
+        schoolId,
+        userId,
+        name,
+      });
+
+      return res.status(HTTP_STATUS.CREATED).json({
+        status: HTTP_STATUS.CREATED,
+        message: MESSAGES.AUTH.SIGN_UP.SUCCEED,
+        data: {
+          ...data,
+          password: data.rawPassword,
+        },
       });
     } catch (error) {
       next(error);
@@ -49,9 +76,9 @@ class AuthController {
   // 로그인
   signIn = async (req, res, next) => {
     try {
-      const { email, password } = req.body;
+      const { loginId, password } = req.body;
 
-      const data = await this.authService.signIn({ email, password });
+      const data = await this.authService.signIn({ loginId, password });
 
       return res.status(HTTP_STATUS.OK).json({
         status: HTTP_STATUS.OK,
@@ -131,6 +158,18 @@ class AuthController {
         status: HTTP_STATUS.OK,
         message: 'MESSAGES.AUTH.SOCIAL.KAKAKO.MORE_INFO',
         data,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  kakaoConnect = async (req, res, next) => {
+    try {
+      console.log('카카오 연동');
+      return res.status(HTTP_STATUS.OK).json({
+        status: HTTP_STATUS.OK,
+        message: '카카오 연동 완료',
       });
     } catch (error) {
       next(error);

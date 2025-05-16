@@ -1,6 +1,9 @@
 import AuthRepository from '../repositories/auth.repository.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import hangul from 'hangul-js';
+const disassemble = hangul.disassemble;
+
 import {
   ConflictError,
   UnauthorizedError,
@@ -17,43 +20,46 @@ import { MESSAGES } from '../constants/message.constant.js';
 import SchoolRepository from '../repositories/school.repository.js';
 import UserRepository from '../repositories/user.repository.js';
 import ClassRepository from '../repositories/class.repository.js';
+import ParentsRepository from '../repositories/parents.repository.js';
+import StudentsRepository from '../repositories/students.repository.js';
+import { text } from 'express';
 
 class AuthService {
   authRepository = new AuthRepository();
   schoolRepository = new SchoolRepository();
   userRepository = new UserRepository();
   classRepository = new ClassRepository();
+  parentsRepository = new ParentsRepository();
+  StudentsRepository = new StudentsRepository();
 
   signUp = async ({
-    email,
     name,
     role,
-    password,
-    photo,
-    passwordCheck,
+    email,
+    phonenumber,
+    homenumber,
+    address,
     subject,
     grade,
-    number,
-    gradeClass,
-    schoolName,
+    schoolId,
   }) => {
     // 필요한 값을 받지 못할 때 에러 반환
-    if (!email || !name || !role || !password) {
+    if (!name || !role || !email) {
       throw new BadRequestError(MESSAGES.AUTH.SIGN_UP.NOT_ENOUGH_DATA);
     }
 
-    // 이메일이 이미 존재한다면 에러 반환
-    const existedUser = await this.authRepository.findUserByEmail(email);
-    if (existedUser) {
-      throw new ConflictError(MESSAGES.AUTH.COMMON.EMAIL.DUPLICATED);
-    }
+    // // 이메일이 이미 존재한다면 에러 반환
+    // const existedUser = await this.authRepository.findUserByEmail(email);
+    // if (existedUser) {
+    //   throw new ConflictError(MESSAGES.AUTH.COMMON.EMAIL.DUPLICATED);
+    // }
 
-    //비밀번호와 비밀번호 확인이 맞지않다면 에러 반환
-    if (password !== passwordCheck) {
-      throw new ConflictError(
-        MESSAGES.AUTH.COMMON.PASSWORD_CHECK.NOT_MATCHTED_WITH_PASSWORD,
-      );
-    }
+    // //비밀번호와 비밀번호 확인이 맞지않다면 에러 반환
+    // if (password !== passwordCheck) {
+    //   throw new ConflictError(
+    //     MESSAGES.AUTH.COMMON.PASSWORD_CHECK.NOT_MATCHTED_WITH_PASSWORD,
+    //   );
+    // }
 
     // 학생이 과목을 작성할려는 경우 에러 반환
     if (role == 'STUDENT' && subject) {
@@ -61,47 +67,119 @@ class AuthService {
     }
 
     // 선생님이 학년, 반, 출석번호를 작성하려는 경우 에러 반환
-    if (role == 'TEACHER' && (grade || number || gradeClass)) {
+    if (role == 'TEACHER' && (grade || phonenumber || homenumber || address)) {
       throw new BadRequestError(MESSAGES.AUTH.SIGN_UP.TEACHER_INVALID);
     }
 
-    // 해당 학교명이 데이터에 없다면 에러 반환
-    const existedSchool =
-      await this.schoolRepository.findSchoolBySchoolName(schoolName);
-    if (!existedSchool) throw new NotFoundError('해당되는 학교가 없습니다.');
+    // // 해당 학교명이 데이터에 없다면 에러 반환
+    // const existedSchool =
+    //   await this.schoolRepository.findSchoolBySchoolName(schoolName);
+    // if (!existedSchool) throw new NotFoundError('해당되는 학교가 없습니다.');
 
-    // schoolRepository에서 값을 배열로 받아 오기 때문에 인덱스로 단일 값만 받아옴
-    const school = existedSchool[0];
-    const schoolId = school.schoolId;
+    // // schoolRepository에서 값을 배열로 받아 오기 때문에 인덱스로 단일 값만 받아옴
+    // const school = existedSchool[0];
+    // const schoolId = school.schoolId;
 
-    // 반 데이터에서 id 가져오기
-    const classId =
-      role === 'STUDENT'
-        ? ((await this.userRepository.findClass(grade, gradeClass))?.classId ??
-          (() => {
-            throw new NotFoundError('해당 반이 존재하지 않습니다.');
-          })())
-        : null;
+    // // 반 데이터에서 id 가져오기
+    // const classId =
+    //   role === 'STUDENT'
+    //     ? ((await this.userRepository.findClass(grade, gradeClass))?.classId ??
+    //       (() => {
+    //         throw new NotFoundError('해당 반이 존재하지 않습니다.');
+    //       })())
+    //     : null;
+
+    const generateRandomPassword = () => {
+      return String(Math.floor(100000 + Math.random() * 900000)); // 6자리 숫자
+    };
+
+    const rawPassword = generateRandomPassword();
 
     const data = await this.authRepository.create({
-      email,
       name,
       role,
-      password,
-      photo,
+      email,
+      phonenumber,
+      homenumber,
+      address,
       subject,
       grade,
-      number,
-      gradeClass,
       schoolId,
-      classId,
+      rawPassword,
     });
 
-    return data;
+    return {
+      ...data,
+      rawPassword,
+    };
   };
 
-  signIn = async ({ email, password }) => {
-    const user = await this.authRepository.findUserByEmail(email);
+  // 학부모 회원가입
+  parentsSignUp = async ({ loginId, schoolId, userId, name }) => {
+    const hangulToQwerty = {
+      ㄱ: 'r',
+      ㄲ: 'R',
+      ㄴ: 's',
+      ㄷ: 'e',
+      ㄸ: 'E',
+      ㄹ: 'f',
+      ㅁ: 'a',
+      ㅂ: 'q',
+      ㅃ: 'Q',
+      ㅅ: 't',
+      ㅆ: 'T',
+      ㅇ: 'd',
+      ㅈ: 'w',
+      ㅉ: 'W',
+      ㅊ: 'c',
+      ㅋ: 'z',
+      ㅌ: 'x',
+      ㅍ: 'v',
+      ㅎ: 'g',
+      ㅏ: 'k',
+      ㅐ: 'o',
+      ㅑ: 'i',
+      ㅒ: 'O',
+      ㅓ: 'j',
+      ㅔ: 'p',
+      ㅕ: 'u',
+      ㅖ: 'P',
+      ㅗ: 'h',
+      ㅛ: 'y',
+      ㅜ: 'n',
+      ㅠ: 'b',
+      ㅡ: 'm',
+      ㅣ: 'l',
+    };
+
+    const koreanToKeyboard = (text) => {
+      const jamos = disassemble(text, true).flat(); //
+      return jamos.map((char) => hangulToQwerty[char] || '').join('');
+    };
+    const rawPassword = koreanToKeyboard(name);
+
+    console.log('📛 원본 이름:', name);
+    console.log('🔐 변환된 비밀번호:', rawPassword);
+
+    const data = await this.parentsRepository.createParents({
+      loginId,
+      schoolId,
+      rawPassword,
+    });
+
+    await this.StudentsRepository.updateParentId({
+      userId,
+      parentsId: data.Parents.parentsId,
+    });
+
+    return {
+      ...data,
+      rawPassword,
+    };
+  };
+
+  signIn = async ({ loginId, password }) => {
+    const user = await this.authRepository.findUserByLoginId(loginId);
     console.log(user);
     const passwordCheck = user && bcrypt.compareSync(password, user.password);
 

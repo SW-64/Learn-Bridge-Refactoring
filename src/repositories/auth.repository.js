@@ -5,66 +5,74 @@ import { authConstant } from '../constants/auth.constant.js';
 class AuthRepository {
   // 회원가입
   create = async ({
-    email,
     name,
     role,
-    password,
-    photo,
+    email,
+    phonenumber,
+    homenumber,
+    address,
     subject,
     grade,
-    number,
-    gradeClass,
     schoolId,
-    classId,
+    rawPassword,
   }) => {
     //비밀번호 암호화처리
     const hashedPassword = bcrypt.hashSync(
-      password,
+      rawPassword,
       authConstant.HASH_SALT_ROUNDS,
     );
 
-    const data = await prisma.user.create({
-      data: {
-        email,
-        name,
-        role,
-        photo,
-        password: hashedPassword,
-        // 유저 테이블과 학교 테이블을 연결
-        schoolId,
-        //...(role === 'TEACHER' && { subject }), // 선생님인 경우 과목 작성
-        ...(role === 'TEACHER' && {
-          // 선생님일 경우 teacher 테이블 생성
-          teacher: {
-            create: {
-              subject,
-            },
-          },
-        }),
-        ...(role === 'STUDENT' && {
-          // 학생일 경우 student 테이블 생성
-          student: {
-            create: {
-              grade,
-              number,
-              gradeClass,
-              // 학생 테이블과 반 테이블 연결
-              classId,
-            },
-          },
-        }),
-      },
-      include: { teacher: true, student: true },
-    });
+    const admissionYear = new Date().getFullYear();
 
-    data.password = undefined;
-    return data;
+    const result = await prisma.$transaction(async (tx) => {
+      // 1단계: 사용자 생성
+      const createdUser = await tx.user.create({
+        data: {
+          name,
+          role,
+          email,
+          password: hashedPassword,
+          schoolId,
+          ...(role === 'TEACHER' && {
+            teacher: {
+              create: { subject },
+            },
+          }),
+          ...(role === 'STUDENT' && {
+            student: {
+              create: {
+                phonenumber,
+                homenumber,
+                address,
+                number: null,
+                classId: null,
+              },
+            },
+          }),
+        },
+        include: { teacher: true, student: true },
+      });
+
+      // 2단계: loginId 생성 및 업데이트
+      const paddedId = String(createdUser.id).padStart(5, '0');
+      const loginId = `${admissionYear}${paddedId}`;
+
+      const updatedUser = await tx.user.update({
+        where: { id: createdUser.id },
+        data: { loginId },
+        include: { teacher: true, student: true },
+      });
+
+      return updatedUser;
+    });
+    result.password = undefined;
+    return result;
   };
 
-  // 이메일로 유저 찾기
-  findUserByEmail = async (email) => {
+  // 로그인 ID로 유저 찾기
+  findUserByLoginId = async (loginId) => {
     const user = await prisma.user.findUnique({
-      where: { email },
+      where: { loginId },
       include: {
         teacher: {
           select: {

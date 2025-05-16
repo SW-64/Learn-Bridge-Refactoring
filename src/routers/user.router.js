@@ -12,11 +12,42 @@ const userService = new UserService(userRepository);
 const userController = new UserController(userService);
 
 // 담임 설정 및 반 생성
+// userRouter.post(
+//   '/assign-homeroom',
+//   requireAccessToken('TEACHER'),
+//   verifySchoolUser,
+//   userController.assignHomeRoom,
+// );
+
 userRouter.post(
-  '/assign-homeroom',
-  requireAccessToken('TEACHER'),
+  '/class',
+  requireAccessToken('ADMIN'),
   verifySchoolUser,
-  userController.assignHomeRoom,
+  userController.createClasses,
+);
+
+// 교사 목록 조회 (담임,비담임)
+userRouter.get(
+  '/class/:classId/homeroom',
+  requireAccessToken('ADMIN'),
+  verifySchoolUser,
+  userController.getTeachers,
+);
+
+// 반 학생 서버 저장
+userRouter.patch(
+  '/class/:classId/managestudent',
+  requireAccessToken('ADMIN'),
+  verifySchoolUser,
+  userController.manageClassStudent,
+);
+
+// 반 교사 서버 저장
+userRouter.patch(
+  '/class/:classId/manageteacher',
+  requireAccessToken('ADMIN'),
+  verifySchoolUser,
+  userController.manageClassTeacher,
 );
 
 // 내 정보 조회
@@ -42,4 +73,5 @@ userRouter.patch(
   verifySchoolUser,
   userController.updateMyInfo,
 );
+
 export { userRouter };

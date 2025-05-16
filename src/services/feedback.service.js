@@ -3,6 +3,7 @@ import FeedbackRepository from '../repositories/feedback.repository.js';
 import StudentsRepository from '../repositories/students.repository.js';
 import TeacherRepository from '../repositories/teacher.repository.js';
 import { FEEDBACK_CATEGORY } from '../constants/enum.constant.js';
+import { sendEmail } from '../utils/send-email.util.js';
 
 class FeedbackService {
   feedbackRepository = new FeedbackRepository();
@@ -20,12 +21,12 @@ class FeedbackService {
           `카테고리가 없거나 유효하지 않은 카테고리입니다: ${item.category}`,
         );
       }
-      const existeedFeedback = await this.feedbackRepository.getFeedbackDetail(
+      const existedFeedback = await this.feedbackRepository.getFeedbackDetail(
         schoolYear,
         studentId,
         item.category,
       );
-      if (existeedFeedback)
+      if (existedFeedback)
         throw new BadRequestError(
           `이미 존재하는 피드백입니다: ${item.category}`,
         );
@@ -45,6 +46,13 @@ class FeedbackService {
       schoolYear,
       existedStudent.user.id,
     );
+    sendEmail(
+      existedStudent.user.email,
+      '[피드백 알림] 피드백 입력이 완료되었습니다.',
+      `${existedStudent.user.name}님의 ${schoolYear}학년 피드백 입력이 완료되었습니다.`,
+    ).catch((err) => {
+      console.error('이메일 전송 실패:', err);
+    });
     return createdFeedback;
   };
 
@@ -59,6 +67,9 @@ class FeedbackService {
         throw new BadRequestError(
           `카테고리가 없거나 유효하지 않은 카테고리입니다: ${item.category}`,
         );
+      }
+      if (!item.updatedAt) {
+        throw new BadRequestError(`업데이트 날짜가 없습니다: ${item.category}`);
       }
     }
 

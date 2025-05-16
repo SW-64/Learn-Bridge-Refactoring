@@ -17,9 +17,11 @@ datasource db {
 model User {
     id           Int            @id @default(autoincrement())
     schoolId     Int            @map("school_id")
+    loginId      String?        @unique @map("login_id")
     name         String?
     role         UserRole?
-    email        String         @unique
+    email        String?        @unique
+    kakaoEmail   String?        @unique
     password     String?
     photo        String?
     createdAt    DateTime       @default(now()) @map("created_at")
@@ -29,6 +31,7 @@ model User {
     school       School         @relation(fields: [schoolId], references: [schoolId])
     RefreshToken RefreshToken?
     notification Notification[]
+    Parents      Parents?
 
     @@map("users")
 }
@@ -47,31 +50,37 @@ model Teacher {
 }
 
 model Student {
-    studentId  Int      @id @default(autoincrement()) @map("student_id")
-    userId     Int      @unique @map("user_id")
-    classId    Int      @map("class_id")
-    grade      Int
-    gradeClass Int
-    number     Int
-    createdAt  DateTime @default(now()) @map("created_at")
+    studentId   Int      @id @default(autoincrement()) @map("student_id")
+    userId      Int      @unique @map("user_id")
+    classId     Int?     @map("class_id")
+    parentsId   Int?     @unique @map("parents_id")
+    number      Int?
+    grade       Int?
+    gradeClass  Int?
+    phonenumber String?
+    homenumber  String?
+    address     String?
+    createdAt   DateTime @default(now()) @map("created_at")
 
-    user          User            @relation(fields: [userId], references: [id])
-    Parents       Parents?
-    StudentRecord StudentRecord[]
-    Grade         Grade[]
-    Consultation  Consultation[]
-    Feedback      Feedback[]
-    class         Class           @relation(fields: [classId], references: [classId])
+    user             User            @relation(fields: [userId], references: [id])
+    Parents          Parents?        @relation(fields: [parentsParentsId], references: [parentsId])
+    StudentRecord    StudentRecord[]
+    Grade            Grade[]
+    Consultation     Consultation[]
+    Feedback         Feedback[]
+    class            Class?          @relation(fields: [classId], references: [classId])
+    parentsParentsId Int?
 
     @@map("students")
 }
 
 model Parents {
     parentsId Int      @id @default(autoincrement()) @map("parent_id")
-    studentId Int      @unique @map("student_id")
+    userId    Int      @unique @map("user_id")
     createdAt DateTime @default(now()) @map("created_at")
 
-    student Student @relation(fields: [studentId], references: [studentId])
+    user    User      @relation(fields: [userId], references: [id])
+    Student Student[]
 
     @@map("parents")
 }
@@ -117,13 +126,13 @@ model School {
 
 model Class {
     classId    Int      @id @default(autoincrement()) @map("class_id")
-    teacherId  Int      @unique @map("teacher_id")
+    teacherId  Int?     @unique @map("teacher_id")
     grade      Int
     gradeClass Int
     created_at DateTime @default(now()) @map("created_at")
     updated_at DateTime @updatedAt @map("updated_at")
 
-    teacher Teacher   @relation(fields: [teacherId], references: [teacherId])
+    teacher Teacher?  @relation(fields: [teacherId], references: [teacherId])
     student Student[]
 
     @@map("class")
@@ -206,6 +215,8 @@ model Notification {
 enum UserRole {
     TEACHER
     STUDENT
+    PARENT
+    ADMIN
 }
 
 enum AttendanceType {
