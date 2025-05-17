@@ -12,3 +12,5 @@ export const ACCESS_TOKEN_EXPIRED_IN = process.env.ACCESS_TOKEN_EXPIRED_IN;
 export const REFRESH_TOKEN_EXPIRED_IN = process.env.REFRESH_TOKEN_EXPIRED_IN;
 export const CRYPTO_SECRET_KEY = process.env.CRYPTO_SECRET_KEY;
 export const RESEND_API_KEY = process.env.RESEND_API_KEY;
+export const SENTRY_DSN = process.env.SENTRY_DSN;
+export const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL;
