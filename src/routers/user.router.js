@@ -19,6 +19,7 @@ const userController = new UserController(userService);
 //   userController.assignHomeRoom,
 // );
 
+// 반 생성
 userRouter.post(
   '/class',
   requireAccessToken('ADMIN'),
@@ -26,6 +27,13 @@ userRouter.post(
   userController.createClasses,
 );
 
+// 반 목록 조회
+userRouter.get(
+  '/class',
+  requireAccessToken('ADMIN'),
+  verifySchoolUser,
+  userController.getClasses,
+);
 // 교사 목록 조회 (담임,비담임)
 userRouter.get(
   '/class/:classId/homeroom',

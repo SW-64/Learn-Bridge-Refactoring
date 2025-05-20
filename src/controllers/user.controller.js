@@ -51,6 +51,22 @@ class UserController {
     }
   };
 
+  getClasses = async (req, res, next) => {
+    try {
+      const schoolId = req.user.schoolId;
+
+      const data = await this.userService.getClasses(schoolId);
+
+      return res.status(201).json({
+        status: 201,
+        message: '반 목록을 성공적으로 불러왔습니다.',
+        data,
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+
   // 교사 목록 조회
   getTeachers = async (req, res, next) => {
     try {

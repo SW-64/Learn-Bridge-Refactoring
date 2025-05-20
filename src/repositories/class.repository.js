@@ -53,6 +53,11 @@ class ClassRepository {
     return data;
   };
 
+  getAllClasses = async (schoolId) => {
+    const data = await prisma.class.findMany();
+    return data;
+  };
+
   // 담임 변경
 
   updateHomeroom = async (classId, originalTeacherId, newTeacherId) => {
