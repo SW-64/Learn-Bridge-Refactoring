@@ -65,6 +65,11 @@ class UserService {
     return data;
   };
 
+  getClasses = async (schoolId) => {
+    const data = await this.classRepository.getAllClasses(schoolId);
+    return data;
+  };
+
   // 교사 목록 조회
   getHomeroomInfo = async (classId, schoolId) => {
     const classData = await this.classRepository.findClassByClassId(classId);
