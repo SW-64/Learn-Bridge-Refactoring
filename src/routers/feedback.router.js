@@ -30,8 +30,8 @@ feedbackRouter.patch(
 // 피드백 조회
 feedbackRouter.get(
   '/students/:studentId',
-  //requireAccessToken(''),
-  //verifySchoolUser, auth 가 필요없기에 verify 코드도 필요가 없어진다
+  requireAccessToken(''),
+  verifySchoolUser,
   feedbackController.getFeedback,
 );
 
