@@ -114,9 +114,22 @@ class ClassRepository {
 
   // 학생들 반에 배정
   assignStudentsToClass = async (tx, classId, addedStudentIds) => {
+    // 반 정보 가져오기
+    const targetClass = await tx.class.findUnique({
+      where: { classId },
+      select: {
+        grade: true,
+        gradeClass: true,
+      },
+    });
+
     await tx.student.updateMany({
       where: { studentId: { in: addedStudentIds } },
-      data: { classId },
+      data: {
+        classId,
+        grade: targetClass.grade,
+        gradeClass: targetClass.gradeClass,
+      },
     });
   };
 
@@ -127,7 +140,11 @@ class ClassRepository {
         studentId: { in: removedStudentIds },
         classId,
       },
-      data: { classId: null },
+      data: {
+        classId: null,
+        grade: null,
+        gradeClass: null,
+      },
     });
   };
 
