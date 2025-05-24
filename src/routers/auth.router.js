@@ -54,7 +54,6 @@ authRouter.get(
 // 카카오 연동
 authRouter.get(
   '/kakao/connect',
-  requireAccessToken(''),
   passport.authenticate('kakao-link', {
     session: false,
     authType: 'reprompt',

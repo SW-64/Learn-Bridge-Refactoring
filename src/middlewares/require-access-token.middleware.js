@@ -73,7 +73,6 @@ export const requireAccessToken = (requiredRole) => {
           });
         }
       }
-
       req.user = user;
       next();
     } catch (error) {
