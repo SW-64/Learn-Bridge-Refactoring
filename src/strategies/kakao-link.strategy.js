@@ -13,7 +13,6 @@ import { HTTP_STATUS } from '../constants/http-status.constant.js';
 
 const authService = new AuthService();
 const classRepository = new ClassRepository(prisma);
-console.log('KAKAO_CONNECT_CALLBACK_URI:', KAKAO_CONNECT_CALLBACK_URI);
 passport.use(
   'kakao-link',
   new kakaoStrategy(
@@ -24,10 +23,12 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
+        console.log('zz)');
         const existedUser = await prisma.user.findUnique({
           where: { kakaoEmail: profile._json.kakao_account.email },
           include: { teacher: true, student: true },
         });
+        n;
         if (existedUser) {
           throw new BadRequestError('이미 존재하는 유저입니다.');
         } else {

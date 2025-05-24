@@ -126,12 +126,18 @@ class AuthController {
   kakaoSignIn = async (req, res, next) => {
     try {
       const user = req.user;
-      console.log(user);
-      return res.status(HTTP_STATUS.OK).json({
-        status: HTTP_STATUS.OK,
-        message: MESSAGES.AUTH.KAKAO.SUCCEED,
-        data: user,
+      const { accessToken, refreshToken, classId, schoolId } = user;
+      const frontendRedirectUrl =
+        'https://software-design-frontend-for-vercel-ixgf.vercel.app/main';
+
+      const query = new URLSearchParams({
+        accessToken,
+        refreshToken,
+        classId: String(classId),
+        schoolId: String(schoolId),
       });
+      console.log(query.toString());
+      return res.redirect(`${frontendRedirectUrl}?${query}`);
     } catch (error) {
       next(error);
     }
@@ -167,10 +173,10 @@ class AuthController {
   kakaoConnect = async (req, res, next) => {
     try {
       console.log('카카오 연동');
-      return res.status(HTTP_STATUS.OK).json({
-        status: HTTP_STATUS.OK,
-        message: '카카오 연동 완료',
-      });
+      const frontendRedirectUrl =
+        'https://software-design-frontend-for-vercel-ixgf.vercel.app/main';
+
+      return res.redirect(`${frontendRedirectUrl}`);
     } catch (error) {
       next(error);
     }
