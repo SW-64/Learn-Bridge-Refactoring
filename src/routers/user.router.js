@@ -74,7 +74,7 @@ userRouter.patch(
   userController.updateMyPassword,
 );
 
-// 내 정보 수정 ( 학교, 이름, 사진 변경 )
+// 내 정보 수정 (사진 변경)
 userRouter.patch(
   '/me',
   requireAccessToken(''),

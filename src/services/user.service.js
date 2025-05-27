@@ -151,19 +151,10 @@ class UserService {
   };
 
   // 내 정보 수정
-  updateMyInfo = async (userId, name, schoolName, profile) => {
+  updateMyInfo = async (userId, profile) => {
     const user = await this.userRepository.getUserById(userId);
     if (!user) throw new NotFoundError('유저를 찾을 수 없습니다.');
-    const school = schoolName
-      ? await this.schoolRepository.findSchoolBySchoolName(schoolName)
-      : null;
-
-    const updatedUser = await this.userRepository.updateMyInfo(
-      userId,
-      name,
-      profile,
-      school ? school[0].schoolId : null,
-    );
+    const updatedUser = await this.userRepository.updateMyInfo(userId, profile);
     return updatedUser;
   };
 }
