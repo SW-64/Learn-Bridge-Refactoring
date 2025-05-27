@@ -82,14 +82,11 @@ class UserRepository {
   };
 
   // 내 정보 수정
-  updateMyInfo = async (userId, name, profile, schoolId) => {
-    console.log(schoolId);
+  updateMyInfo = async (userId, profile) => {
     const user = await prisma.user.update({
       where: { id: userId },
       data: {
-        ...(name && { name }),
         ...(profile && { photo: profile }),
-        ...(schoolId && { schoolId }),
       },
     });
     return user;

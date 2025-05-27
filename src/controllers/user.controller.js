@@ -172,14 +172,9 @@ class UserController {
   updateMyInfo = async (req, res, next) => {
     try {
       const userId = req.user.id;
-      const { name, schoolName, profile } = req.body;
+      const { profile } = req.body;
 
-      const data = await this.userService.updateMyInfo(
-        userId,
-        name,
-        schoolName,
-        profile,
-      );
+      const data = await this.userService.updateMyInfo(userId, profile);
 
       return res.status(HTTP_STATUS.OK).json({
         status: HTTP_STATUS.OK,
