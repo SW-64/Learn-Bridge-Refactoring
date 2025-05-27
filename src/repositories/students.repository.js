@@ -13,6 +13,8 @@ class StudentsRepository {
       select: {
         studentId: true,
         number: true,
+        grade: true,
+        gradeClass: true,
         user: {
           select: {
             name: true,
