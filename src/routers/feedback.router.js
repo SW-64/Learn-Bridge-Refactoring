@@ -43,4 +43,12 @@ feedbackRouter.get(
   feedbackController.getMyFeedback,
 );
 
+// 피드백 조회 (학부모)
+feedbackRouter.get(
+  '/child',
+  requireAccessToken('PARENT'),
+  verifySchoolUser,
+  feedbackController.getChildFeedback,
+);
+
 export { feedbackRouter };

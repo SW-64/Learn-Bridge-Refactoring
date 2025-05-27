@@ -28,6 +28,16 @@ class ParentsRepository {
     });
     return data;
   };
+
+  // 유저 ID로 학부모 찾기
+  getParentsByUserId = async (userId) => {
+    const parent = await prisma.parents.findUnique({
+      where: {
+        userId: userId,
+      },
+    });
+    return parent;
+  };
 }
 
 export default ParentsRepository;

@@ -99,6 +99,18 @@ class FeedbackRepository {
         category: true,
         content: true,
         updatedAt: true,
+        student: {
+          select: {
+            studentId: true,
+            user: {
+              select: {
+                name: true,
+                loginId: true,
+                email: true,
+              },
+            },
+          },
+        },
       },
     });
     return feedback;

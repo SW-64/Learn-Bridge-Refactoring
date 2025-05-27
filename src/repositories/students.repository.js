@@ -182,6 +182,26 @@ class StudentsRepository {
     return student;
   };
 
+  // 부모 ID로 학생 찾기기
+  getStudentByParentId = async (parentsId) => {
+    return await prisma.student.findUnique({
+      where: { parentsId },
+      select: {
+        studentId: true,
+        grade: true,
+        number: true,
+        gradeClass: true,
+        user: {
+          select: {
+            name: true,
+            email: true,
+            photo: true,
+          },
+        },
+      },
+    });
+  };
+
   // 학부모 - 학생 테이블 연결
   updateParentId = async ({ userId, parentsId }) => {
     await prisma.student.update({

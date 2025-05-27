@@ -4,11 +4,14 @@ import StudentsRepository from '../repositories/students.repository.js';
 import TeacherRepository from '../repositories/teacher.repository.js';
 import { FEEDBACK_CATEGORY } from '../constants/enum.constant.js';
 import { sendEmail } from '../utils/send-email.util.js';
+import ParentsRepository from '../repositories/parents.repository.js';
 
 class FeedbackService {
   feedbackRepository = new FeedbackRepository();
   teacherRepository = new TeacherRepository();
   studentRepository = new StudentsRepository();
+  parentRepository = new ParentsRepository();
+
   // 피드백 작성
   createFeedback = async (studentId, feedback, schoolYear) => {
     // 필요한 값 가져오기
@@ -106,13 +109,36 @@ class FeedbackService {
     return feedback;
   };
 
-  // 피드백 조회 ( 학생 / 학부모 )
+  // 피드백 조회 ( 학생 )
   getMyFeedback = async (userId, schoolYear) => {
     const hasRequiredData = userId && schoolYear;
     if (!hasRequiredData) throw new NotFoundError('값을 불러오지 못했습니다.');
 
     const student = await this.studentRepository.getStudentByUserId(userId);
     if (!student) throw new NotFoundError('해당 학생이 존재하지 않습니다.');
+
+    const getMyFeedback = await this.feedbackRepository.getMyFeedback(
+      student.studentId,
+      schoolYear,
+    );
+
+    return getMyFeedback;
+  };
+
+  // 피드백 조회 (학부모)
+  getChildFeedback = async (schoolYear, userId) => {
+    const hasRequiredData = userId && schoolYear;
+    if (!hasRequiredData) throw new NotFoundError('값을 불러오지 못했습니다.');
+
+    const parent = await this.parentRepository.getParentsByUserId(userId);
+    if (!parent) throw new NotFoundError('해당 학부모가 존재하지 않습니다.');
+    console.log('[DEBUG] parent:', parent);
+    const parentsId = parent.parentsId;
+
+    const student =
+      await this.studentRepository.getStudentByParentId(parentsId);
+    if (!student) throw new NotFoundError('해당 학생이 존재하지 않습니다.');
+    console.log('[DEBUG] student:', student);
 
     const getMyFeedback = await this.feedbackRepository.getMyFeedback(
       student.studentId,
