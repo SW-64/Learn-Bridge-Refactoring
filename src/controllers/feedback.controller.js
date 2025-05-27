@@ -70,7 +70,7 @@ class FeedbackController {
     }
   };
 
-  // 피드백 조회 ( 학생 / 학부모 )
+  // 피드백 조회 ( 학생 )
   getMyFeedback = async (req, res, next) => {
     try {
       const { schoolYear } = req.query;
@@ -83,6 +83,27 @@ class FeedbackController {
       return res.status(HTTP_STATUS.OK).json({
         status: HTTP_STATUS.OK,
         message: '내 피드백 조회 완료',
+        data: feedback,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  // 피드백 조회 (학부모)
+  getChildFeedback = async (req, res, next) => {
+    try {
+      const { schoolYear } = req.query;
+      const userId = req.user.id;
+      console.log('[DEBUG] userId:', userId);
+      const feedback = await this.feedbackService.getChildFeedback(
+        +schoolYear,
+        +userId,
+      );
+
+      return res.status(HTTP_STATUS.OK).json({
+        status: HTTP_STATUS.OK,
+        message: '자녀 피드백 조회 완료',
         data: feedback,
       });
     } catch (error) {
