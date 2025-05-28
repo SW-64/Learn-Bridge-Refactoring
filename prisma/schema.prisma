@@ -62,14 +62,13 @@ model Student {
     address     String?
     createdAt   DateTime @default(now()) @map("created_at")
 
-    user             User            @relation(fields: [userId], references: [id])
-    Parents          Parents?        @relation(fields: [parentsParentsId], references: [parentsId])
-    StudentRecord    StudentRecord[]
-    Grade            Grade[]
-    Consultation     Consultation[]
-    Feedback         Feedback[]
-    class            Class?          @relation(fields: [classId], references: [classId])
-    parentsParentsId Int?
+    user          User            @relation(fields: [userId], references: [id])
+    Parents       Parents?        @relation(fields: [parentsId], references: [parentsId])
+    StudentRecord StudentRecord[]
+    Grade         Grade[]
+    Consultation  Consultation[]
+    Feedback      Feedback[]
+    class         Class?          @relation(fields: [classId], references: [classId])
 
     @@map("students")
 }
