@@ -51,6 +51,9 @@ class UserRepository {
               Student: {
                 select: {
                   studentId: true,
+                  grade: true,
+                  gradeClass: true,
+                  number: true,
                 },
               },
             },
