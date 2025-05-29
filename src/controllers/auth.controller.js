@@ -208,6 +208,7 @@ class AuthController {
         });
       }
       const uuid = crypto.randomUUID();
+      console.log('token:', token);
       await redis.set(`kakao-link:${uuid}`, token, 'EX', 300);
       passport.authenticate('kakao-link', {
         session: false,
