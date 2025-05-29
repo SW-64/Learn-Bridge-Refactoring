@@ -33,8 +33,9 @@ passport.use(
           where: { kakaoEmail: profile._json.kakao_account.email },
           include: { teacher: true, student: true },
         });
-        console.log(req);
+
         if (existedUser) {
+          console.log(req);
           throw new BadRequestError('이미 존재하는 유저입니다.');
         } else {
           const uuid = req.query.state;
