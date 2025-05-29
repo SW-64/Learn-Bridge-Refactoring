@@ -216,6 +216,7 @@ class AuthController {
 
       await redis.set(`kakao-link:${uuid}`, token, 'EX', 300);
       const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${encodeURIComponent(KAKAO_CONNECT_CALLBACK_URI)}&response_type=code&state=${uuid}`;
+      console.log('Kakao Auth URL:', kakaoAuthUrl);
       return res.redirect(kakaoAuthUrl);
     } catch (error) {
       next(error);
