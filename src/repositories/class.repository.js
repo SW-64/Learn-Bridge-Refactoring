@@ -54,7 +54,11 @@ class ClassRepository {
   };
 
   getAllClasses = async (schoolId) => {
-    const data = await prisma.class.findMany();
+    const data = await prisma.class.findMany({
+      where: {
+        schoolId,
+      },
+    });
     return data;
   };
 
