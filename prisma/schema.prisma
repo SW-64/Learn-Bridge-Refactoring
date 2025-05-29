@@ -118,7 +118,8 @@ model School {
     schoolName String   @unique
     createdAt  DateTime @default(now()) @map("created_at")
 
-    user User[]
+    user  User[]
+    Class Class[]
 
     @@map("school")
 }
@@ -126,6 +127,7 @@ model School {
 model Class {
     classId    Int      @id @default(autoincrement()) @map("class_id")
     teacherId  Int?     @unique @map("teacher_id")
+    schoolId   Int?     @map("school_id")
     grade      Int
     gradeClass Int
     created_at DateTime @default(now()) @map("created_at")
@@ -133,6 +135,7 @@ model Class {
 
     teacher Teacher?  @relation(fields: [teacherId], references: [teacherId])
     student Student[]
+    school  School?   @relation(fields: [schoolId], references: [schoolId])
 
     @@map("class")
 }

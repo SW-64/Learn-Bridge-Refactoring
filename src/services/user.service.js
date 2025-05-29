@@ -48,7 +48,7 @@ class UserService {
   // };
 
   // 반 생성 (반 초기화)
-  createClasses = async ({ grade1, grade2, grade3 }) => {
+  createClasses = async ({ grade1, grade2, grade3, schoolId }) => {
     const allClassData = [];
 
     for (let grade = 1; grade <= 3; grade++) {
@@ -58,6 +58,7 @@ class UserService {
         allClassData.push({
           grade,
           gradeClass: i,
+          schoolId,
         });
       }
     }
