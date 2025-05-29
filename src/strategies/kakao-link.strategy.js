@@ -36,54 +36,53 @@ passport.use(
 
         if (existedUser) {
           console.log(req);
-          throw new BadRequestError(`이미 존재하는 유저입니다.${req}`);
-        } else {
-          const uuid = req.query.state;
-          console.log('UUID:', uuid);
-          if (!uuid) {
-            throw new BadRequestError('UUID가 필요합니다.');
-          }
-
-          const accessToken = await redis.get(`kakao-link:${uuid}`);
-          if (!accessToken) {
-            throw new BadRequestError('유효하지 않은 UUID입니다.');
-          }
-
-          if (!accessToken) {
-            throw new BadRequestError(MESSAGES.AUTH.COMMON.JWT.NO_TOKEN);
-          }
-
-          let payload;
-          try {
-            payload = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
-          } catch (error) {
-            // accessToken 유효기간 만료된 경우
-            if (error.name === 'TokenExpiredError') {
-              throw new BadRequestError(MESSAGES.AUTH.COMMON.JWT.EXPIRED);
-            }
-            // 그 밖의 accessToken 검증에 실패한 경우
-            else {
-              throw new BadRequestError(MESSAGES.AUTH.COMMON.JWT.INVALID);
-            }
-          }
-
-          // payload에 담긴 사용자 id와 일치하는 사용자가 없는 경우
-          const { id, role } = payload;
-
-          const user = await authRepository.findUserById(id);
-
-          if (!user) {
-            throw new BadRequestError(MESSAGES.AUTH.COMMON.JWT.NO_USER);
-          }
-          const userId = user.id;
-          const userLinkKakao = await prisma.user.update({
-            where: { id: userId },
-            data: {
-              kakaoEmail: profile._json.kakao_account.email,
-            },
-          });
-          return done(null, { message: '카카오 연동 완료' });
+          throw new BadRequestError(`이미 존재하는 유저입니다.${req.query}`);
         }
+        const uuid = req.query.state;
+        console.log('UUID:', uuid);
+        if (!uuid) {
+          throw new BadRequestError(`UUID가 필요합니다. ${uuid}`);
+        }
+
+        const accessToken = await redis.get(`kakao-link:${uuid}`);
+        if (!accessToken) {
+          throw new BadRequestError('유효하지 않은 UUID입니다.');
+        }
+
+        if (!accessToken) {
+          throw new BadRequestError(MESSAGES.AUTH.COMMON.JWT.NO_TOKEN);
+        }
+
+        let payload;
+        try {
+          payload = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
+        } catch (error) {
+          // accessToken 유효기간 만료된 경우
+          if (error.name === 'TokenExpiredError') {
+            throw new BadRequestError(MESSAGES.AUTH.COMMON.JWT.EXPIRED);
+          }
+          // 그 밖의 accessToken 검증에 실패한 경우
+          else {
+            throw new BadRequestError(MESSAGES.AUTH.COMMON.JWT.INVALID);
+          }
+        }
+
+        // payload에 담긴 사용자 id와 일치하는 사용자가 없는 경우
+        const { id, role } = payload;
+
+        const user = await authRepository.findUserById(id);
+
+        if (!user) {
+          throw new BadRequestError(MESSAGES.AUTH.COMMON.JWT.NO_USER);
+        }
+        const userId = user.id;
+        const userLinkKakao = await prisma.user.update({
+          where: { id: userId },
+          data: {
+            kakaoEmail: profile._json.kakao_account.email,
+          },
+        });
+        return done(null, { message: '카카오 연동 완료' });
       } catch (error) {
         console.error('Kakao login error:', error);
         done(error, null);
