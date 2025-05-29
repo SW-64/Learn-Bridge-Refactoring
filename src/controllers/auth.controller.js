@@ -1,7 +1,9 @@
 import AuthService from '../services/auth.service.js';
 import { HTTP_STATUS } from '../constants/http-status.constant.js';
 import { MESSAGES } from '../constants/message.constant.js';
-
+import passport from 'passport';
+import '../strategies/kakao-link.strategy.js';
+import redis from '../utils/redis.util.js';
 class AuthController {
   authService = new AuthService();
 
@@ -170,13 +172,48 @@ class AuthController {
     }
   };
 
-  kakaoConnect = async (req, res, next) => {
+  redirectAfterKakaoConnect = async (req, res, next) => {
     try {
-      console.log('카카오 연동');
+      const uuid = req.query.state;
+      if (!uuid) {
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({
+          status: HTTP_STATUS.BAD_REQUEST,
+          message: 'UUID가 필요합니다.',
+        });
+      }
+
+      const token = await redis.get(`kakao-link:${uuid}`);
+      if (!token) {
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({
+          status: HTTP_STATUS.BAD_REQUEST,
+          message: '유효하지 않은 UUID입니다.',
+        });
+      }
       const frontendRedirectUrl =
         'https://software-design-frontend-for-vercel-ixgf.vercel.app/main';
 
       return res.redirect(`${frontendRedirectUrl}`);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  kakaoConnect = async (req, res, next) => {
+    try {
+      const token = req.query.token;
+      if (!token) {
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({
+          status: HTTP_STATUS.BAD_REQUEST,
+          message: '토큰이 필요합니다.',
+        });
+      }
+      const uuid = crypto.randomUUID();
+      await redis.set(`kakao-link:${uuid}`, token, 'EX', 300);
+      passport.authenticate('kakao-link', {
+        session: false,
+        authType: 'reprompt',
+        state: uuid,
+      })(req, res, next);
     } catch (error) {
       next(error);
     }

@@ -52,21 +52,14 @@ authRouter.get(
 );
 
 // 카카오 연동
-authRouter.get(
-  '/kakao/connect',
-  passport.authenticate('kakao-link', {
-    session: false,
-    authType: 'reprompt',
-  }),
-);
+authRouter.get('/kakao/connect', authController.kakaoConnect);
 
 // 카카오 연동 콜백
 authRouter.get(
   '/kakao/connect/callback',
-  requireAccessToken(''),
   passport.authenticate('kakao-link', {
     session: false,
   }),
-  authController.kakaoConnect,
+  authController.redirectAfterKakaoConnect,
 );
 export { authRouter };
