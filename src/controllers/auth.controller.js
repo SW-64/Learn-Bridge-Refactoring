@@ -4,6 +4,10 @@ import { MESSAGES } from '../constants/message.constant.js';
 import passport from 'passport';
 import '../strategies/kakao-link.strategy.js';
 import redis from '../utils/redis.util.js';
+import {
+  KAKAO_CLIENT_ID,
+  KAKAO_CONNECT_CALLBACK_URI,
+} from '../constants/env.constant.js';
 class AuthController {
   authService = new AuthService();
 
@@ -174,6 +178,15 @@ class AuthController {
 
   redirectAfterKakaoConnect = async (req, res, next) => {
     try {
+      const uuid = req.query.state;
+      console.log('UUID:', uuid);
+      if (!uuid) {
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({
+          status: HTTP_STATUS.BAD_REQUEST,
+          message: 'UUID가 필요합니다.',
+        });
+      }
+
       const token = await redis.get(`kakao-link:${uuid}`);
       if (!token) {
         return res.status(HTTP_STATUS.BAD_REQUEST).json({
@@ -200,13 +213,10 @@ class AuthController {
         });
       }
       const uuid = crypto.randomUUID();
-      console.log('token:', token);
+
       await redis.set(`kakao-link:${uuid}`, token, 'EX', 300);
-      passport.authenticate('kakao-link', {
-        session: false,
-        authType: 'reprompt',
-        state: uuid,
-      })(req, res, next);
+      const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${encodeURIComponent(KAKAO_CONNECT_CALLBACK_URI)}&response_type=code&state=${uuid}`;
+      return res.redirect(kakaoAuthUrl);
     } catch (error) {
       next(error);
     }
