@@ -36,7 +36,7 @@ passport.use(
 
         if (existedUser) {
           console.log(req);
-          throw new BadRequestError('이미 존재하는 유저입니다.');
+          throw new BadRequestError(`이미 존재하는 유저입니다.${req}`);
         } else {
           const uuid = req.query.state;
           console.log('UUID:', uuid);
