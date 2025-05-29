@@ -174,14 +174,6 @@ class AuthController {
 
   redirectAfterKakaoConnect = async (req, res, next) => {
     try {
-      const uuid = req.query.state;
-      if (!uuid) {
-        return res.status(HTTP_STATUS.BAD_REQUEST).json({
-          status: HTTP_STATUS.BAD_REQUEST,
-          message: 'UUID가 필요합니다.',
-        });
-      }
-
       const token = await redis.get(`kakao-link:${uuid}`);
       if (!token) {
         return res.status(HTTP_STATUS.BAD_REQUEST).json({
