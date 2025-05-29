@@ -33,13 +33,12 @@ passport.use(
           where: { kakaoEmail: profile._json.kakao_account.email },
           include: { teacher: true, student: true },
         });
-
+        console.log(req);
         if (existedUser) {
           throw new BadRequestError('이미 존재하는 유저입니다.');
         } else {
           const uuid = req.query.state;
           console.log('UUID:', uuid);
-          console.log('req', req);
           if (!uuid) {
             throw new BadRequestError('UUID가 필요합니다.');
           }
