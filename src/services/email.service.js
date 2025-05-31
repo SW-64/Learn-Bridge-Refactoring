@@ -26,7 +26,7 @@ class EmailService {
     const code = getRandomCode();
     console.log(code);
     await redis.set(email, code, 'EX', 300); // 5분 유효기간
-    console.log(await redis.get(email));
+
     sendEmail(
       email,
       '[인증 코드 알림]',
