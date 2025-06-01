@@ -11,6 +11,7 @@ export default defineConfig({
       reportsDirectory: './coverage',
       reporter: ['text', 'html'], // text는 터미널, html은 브라우저 확인용
       exclude: ['tests', '**/*.test.js'],
+      include: ['src/services/**/*.js'],
     },
   },
 });
