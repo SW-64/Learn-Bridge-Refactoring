@@ -4,7 +4,7 @@ import { authConstant } from '../constants/auth.constant.js';
 
 class ParentsRepository {
   // 학부모 회원가입
-  createParents = async ({ loginId, schoolId, rawPassword }) => {
+  createParents = async ({ loginId, schoolId, rawPassword, name }) => {
     //비밀번호 암호화처리
     const hashedPassword = bcrypt.hashSync(
       rawPassword,
@@ -17,6 +17,7 @@ class ParentsRepository {
         loginId: `${loginIdStr}p`,
         password: hashedPassword,
         role: 'PARENT',
+        name: name,
         Parents: {
           create: {},
         },
