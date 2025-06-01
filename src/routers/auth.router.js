@@ -47,6 +47,8 @@ authRouter.get(
   '/kakao/sign-in/callback',
   passport.authenticate('kakao-signIn', {
     session: false,
+    failureRedirect:
+      'https://software-design-frontend-for-vercel-ixgf.vercel.app',
   }),
   authController.kakaoSignIn,
 );
@@ -59,6 +61,8 @@ authRouter.get(
   '/kakao/connect/callback',
   passport.authenticate('kakao-link', {
     session: false,
+    failureRedirect:
+      'https://software-design-frontend-for-vercel-ixgf.vercel.app',
   }),
   authController.redirectAfterKakaoConnect,
 );
