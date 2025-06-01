@@ -49,7 +49,7 @@ passport.use(
 
           return done(null, userData);
         } else {
-          throw new NotFoundError('연동되지 않는 유저입니다.');
+          return done(null, false, { message: `연동되지 않는 유저입니다.` });
         }
       } catch (error) {
         console.error('Kakao login error:', error);
