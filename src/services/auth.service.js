@@ -165,6 +165,7 @@ class AuthService {
       loginId,
       schoolId,
       rawPassword,
+      name,
     });
 
     await this.StudentsRepository.updateParentId({
