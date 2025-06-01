@@ -1,4 +1,5 @@
 import { ConflictError, NotFoundError } from '../errors/http.error.js';
+import emailQueue from '../queues/email.queue.js';
 import GradesRepository from '../repositories/grades.repository.js';
 import StudentsRepository from '../repositories/students.repository.js';
 import { decrypt, encrypt } from '../utils/crypto.util.js';
@@ -42,6 +43,7 @@ class GradesService {
       gradesWithStudentId,
       student.user.id,
     );
+    /*
     sendEmail(
       student.user.email,
       '[성적 알림] 성적 입력이 완료되었습니다.',
@@ -49,6 +51,13 @@ class GradesService {
     ).catch((err) => {
       console.error('이메일 전송 실패:', err);
     });
+    */
+    await emailQueue.add({
+      to: student.user.email,
+      subject: '[성적 알림] 성적 입력이 완료되었습니다.',
+      html: `${student.user.name}님의 ${gradesWithStudentId[0].schoolYear}학년 ${gradesWithStudentId[0].semester}학기 성적 입력이 완료되었습니다.`,
+    });
+
     return grades;
   };
   // 성적 조회
