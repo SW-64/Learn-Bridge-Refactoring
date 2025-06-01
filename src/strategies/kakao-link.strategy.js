@@ -29,7 +29,7 @@ passport.use(
     },
     async (req, accessToken, refreshToken, profile, done) => {
       try {
-        const existedUser = await prisma.user.findFirst({
+        const existedUser = await prisma.user.findUnique({
           where: { kakaoEmail: profile._json.kakao_account.email },
           include: { teacher: true, student: true },
         });
