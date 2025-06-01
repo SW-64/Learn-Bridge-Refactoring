@@ -3,8 +3,10 @@ import GradesService from '../../src/services/grades.service.js';
 import { sendEmail } from '../../src/utils/send-email.util.js';
 import { encrypt } from '../../src/utils/crypto.util.js';
 
-vi.mock('../../src/utils/send-email.util.js', () => ({
-  sendEmail: vi.fn().mockResolvedValue(),
+import emailQueue from '../../src/queues/email.queue.js';
+
+vi.mock('../../src/queues/email.queue.js', () => ({
+  default: { add: vi.fn().mockResolvedValue() },
 }));
 
 vi.mock('../../src/utils/crypto.util.js', () => ({
@@ -51,41 +53,7 @@ describe('GradesService - createGrades()', () => {
     );
   });
 
-  it('should log error if email sending fails', async () => {
-    const input = [
-      {
-        schoolYear: 2024,
-        semester: 1,
-        subject: '과학',
-        score: 88,
-        studentId: 1,
-      },
-    ];
-
-    const student = {
-      user: { id: 99, email: 's@ex.com', name: '홍길동' },
-    };
-
-    service.gradeRepository.getGradesByPeriodAndSubject.mockResolvedValue(null);
-    service.studentRepository.getOneStudent.mockResolvedValue(student);
-    service.gradeRepository.createGrades.mockResolvedValue({ done: true });
-
-    // sendEmail이 실패하도록 일부러 reject
-    sendEmail.mockRejectedValue(new Error('메일 전송 실패'));
-
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
-    await service.createGrades(input);
-
-    expect(consoleSpy).toHaveBeenCalledWith(
-      '이메일 전송 실패:',
-      expect.any(Error),
-    );
-
-    consoleSpy.mockRestore(); // 이후 콘솔 복구
-  });
-
-  it('should create encrypted grade and send email if valid', async () => {
+  it('should create encrypted grade and queue email if valid', async () => {
     const input = [
       {
         schoolYear: 2024,
@@ -97,7 +65,7 @@ describe('GradesService - createGrades()', () => {
     ];
 
     const student = {
-      user: { id: 99, email: 's@ex.com', name: '홍길동' },
+      user: { id: 99, email: 'test.com', name: '홍길동' },
     };
 
     service.gradeRepository.getGradesByPeriodAndSubject.mockResolvedValue(null);
@@ -116,7 +84,52 @@ describe('GradesService - createGrades()', () => {
       ]),
       99,
     );
-    expect(sendEmail).toHaveBeenCalled();
+
+    expect(emailQueue.add).toHaveBeenCalledWith({
+      to: 'test.com',
+      subject: expect.stringContaining('[성적 알림]'),
+      html: expect.stringContaining('성적 입력이 완료'),
+    });
+
+    expect(result).toEqual({ done: true });
+  });
+
+  it('should create encrypted grade and send email if valid', async () => {
+    const input = [
+      {
+        schoolYear: 2024,
+        semester: 1,
+        subject: '수학',
+        score: 95,
+        studentId: 1,
+      },
+    ];
+
+    const student = {
+      user: { id: 99, email: 'test.com', name: '홍길동' },
+    };
+
+    service.gradeRepository.getGradesByPeriodAndSubject.mockResolvedValue(null);
+    service.studentRepository.getOneStudent.mockResolvedValue(student);
+    service.gradeRepository.createGrades.mockResolvedValue({ done: true });
+
+    const result = await service.createGrades(input);
+
+    expect(encrypt).toHaveBeenCalledWith(95);
+    expect(service.gradeRepository.createGrades).toHaveBeenCalledWith(
+      expect.arrayContaining([
+        expect.objectContaining({
+          scoreIv: 'iv123',
+          scoreContent: 'enc123',
+        }),
+      ]),
+      99,
+    );
+    expect(emailQueue.add).toHaveBeenCalledWith({
+      to: 'test.com',
+      subject: expect.stringContaining('[성적 알림]'),
+      html: expect.stringContaining('성적 입력이 완료'),
+    });
     expect(result).toEqual({ done: true });
   });
 });
@@ -254,7 +267,7 @@ describe('GradesService - getGrades()', () => {
       ];
 
       const student = {
-        user: { id: 99, email: 's@ex.com', name: '홍길동' },
+        user: { id: 99, email: 'test.com', name: '홍길동' },
       };
 
       service.gradeRepository.getGradesByPeriodAndSubject.mockResolvedValue(
