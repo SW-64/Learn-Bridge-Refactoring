@@ -134,7 +134,7 @@ class AuthController {
       const user = req.user;
       const { accessToken, refreshToken, classId, schoolId } = user;
       const frontendRedirectUrl =
-        'https://software-design-frontend-for-vercel-ixgf.vercel.app/main';
+        'https://software-design-frontend-for-vercel-ixgf.vercel.app';
 
       const query = new URLSearchParams({
         accessToken,
