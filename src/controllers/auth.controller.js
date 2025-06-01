@@ -195,7 +195,7 @@ class AuthController {
         });
       }
       const frontendRedirectUrl =
-        'https://software-design-frontend-for-vercel-ixgf.vercel.app';
+        'https://software-design-frontend-for-vercel-ixgf.vercel.app/main?kkaoStatus=success';
 
       return res.redirect(`${frontendRedirectUrl}`);
     } catch (error) {
