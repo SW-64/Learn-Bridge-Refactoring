@@ -63,6 +63,9 @@ class StudentsRepository {
         grade: true,
         number: true,
         gradeClass: true,
+        homenumber: true,
+        address: true,
+        phonenumber: true,
         user: {
           select: {
             id: true,
