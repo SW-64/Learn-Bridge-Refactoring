@@ -204,6 +204,7 @@ describe('AuthService', () => {
         loginId,
         schoolId,
         rawPassword: expect.any(String),
+        name,
       });
 
       expect(
