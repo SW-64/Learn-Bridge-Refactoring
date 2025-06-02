@@ -21,6 +21,7 @@ class UserRepository {
         name: true,
         role: true,
         kakaoEmail: true,
+        photo: true,
         ...(userRole === 'TEACHER' && {
           teacher: {
             select: {
