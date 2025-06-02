@@ -21,6 +21,7 @@ class UserRepository {
         name: true,
         role: true,
         kakaoEmail: true,
+        email: true,
         photo: true,
         ...(userRole === 'TEACHER' && {
           teacher: {
@@ -43,6 +44,9 @@ class UserRepository {
               grade: true,
               gradeClass: true,
               number: true,
+              homenumber: true,
+              address: true,
+              phonenumber: true,
             },
           },
         }),
