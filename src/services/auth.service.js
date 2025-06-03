@@ -158,9 +158,6 @@ class AuthService {
     };
     const rawPassword = koreanToKeyboard(name);
 
-    console.log('📛 원본 이름:', name);
-    console.log('🔐 변환된 비밀번호:', rawPassword);
-
     const data = await this.parentsRepository.createParents({
       loginId,
       schoolId,
@@ -181,7 +178,6 @@ class AuthService {
 
   signIn = async ({ loginId, password }) => {
     const user = await this.authRepository.findUserByLoginId(loginId);
-    console.log(user);
     const passwordCheck = user && bcrypt.compareSync(password, user.password);
 
     if (!passwordCheck) {

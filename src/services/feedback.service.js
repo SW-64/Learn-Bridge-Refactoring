@@ -132,13 +132,11 @@ class FeedbackService {
 
     const parent = await this.parentRepository.getParentsByUserId(userId);
     if (!parent) throw new NotFoundError('해당 학부모가 존재하지 않습니다.');
-    console.log('[DEBUG] parent:', parent);
     const parentsId = parent.parentsId;
 
     const student =
       await this.studentRepository.getStudentByParentId(parentsId);
     if (!student) throw new NotFoundError('해당 학생이 존재하지 않습니다.');
-    console.log('[DEBUG] student:', student);
 
     const getMyFeedback = await this.feedbackRepository.getMyFeedback(
       student.studentId,

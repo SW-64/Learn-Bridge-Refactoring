@@ -56,8 +56,6 @@ class AuthController {
   parentsSignUp = async (req, res, next) => {
     try {
       const { loginId, schoolId, id: userId, name } = req.user;
-      console.log('loginId:', loginId, typeof loginId);
-      console.log('schoolId:', schoolId, typeof schoolId);
 
       const data = await this.authService.parentsSignUp({
         loginId,
@@ -142,7 +140,6 @@ class AuthController {
         classId: String(classId),
         schoolId: String(schoolId),
       });
-      console.log(query.toString());
       return res.redirect(`${frontendRedirectUrl}?${query}`);
     } catch (error) {
       next(error);
@@ -179,7 +176,6 @@ class AuthController {
   redirectAfterKakaoConnect = async (req, res, next) => {
     try {
       const uuid = req.query.state;
-      console.log('UUID:', uuid);
       if (!uuid) {
         return res.status(HTTP_STATUS.BAD_REQUEST).json({
           status: HTTP_STATUS.BAD_REQUEST,
@@ -216,7 +212,6 @@ class AuthController {
 
       await redis.set(`kakao-link:${uuid}`, token, 'EX', 300);
       const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${encodeURIComponent(KAKAO_CONNECT_CALLBACK_URI)}&response_type=code&state=${uuid}`;
-      console.log('Kakao Auth URL:', kakaoAuthUrl);
       return res.redirect(kakaoAuthUrl);
     } catch (error) {
       next(error);

@@ -95,7 +95,6 @@ class FeedbackController {
     try {
       const { schoolYear } = req.query;
       const userId = req.user.id;
-      console.log('[DEBUG] userId:', userId);
       const feedback = await this.feedbackService.getChildFeedback(
         +schoolYear,
         +userId,

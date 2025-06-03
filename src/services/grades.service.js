@@ -112,7 +112,6 @@ class GradesService {
   // 성적 수정
   updateGrades = async (gradesWithStudentId) => {
     // 유효성 검사
-    console.log(gradesWithStudentId);
     for (const item of gradesWithStudentId) {
       const { schoolYear, semester, subject, score, studentId, updatedAt } =
         item;

@@ -24,7 +24,6 @@ class EmailService {
   // 인증 코드 발송
   sendFindMyPasswordCode = async (email) => {
     const code = getRandomCode();
-    console.log(code);
     await redis.set(email, code, 'EX', 300); // 5분 유효기간
 
     sendEmail(
