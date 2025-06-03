@@ -241,6 +241,12 @@ describe('StudentRecordService - createStudentExtraInfo()', () => {
     ).rejects.toThrow('해당 학생이 존재하지 않습니다.');
   });
 
+  it('should throw error if extraInfo is missing entirely', async () => {
+    await expect(service.createStudentExtraInfo(1, null, 1)).rejects.toThrow(
+      '값을 불러오지 못했습니다.',
+    );
+  });
+
   it('should upsert student extra info if all data is valid', async () => {
     const studentId = 1;
     const semester = 1;
@@ -307,6 +313,15 @@ describe('StudentRecordService - getClassAttendance()', () => {
       getClassAttendance: vi.fn(),
     };
     vi.clearAllMocks();
+  });
+
+  it('should throw error if classId or date is missing', async () => {
+    await expect(
+      service.getClassAttendance(null, '2025-06-01'),
+    ).rejects.toThrow('값을 불러오지 못했습니다.');
+    await expect(service.getClassAttendance(1, null)).rejects.toThrow(
+      '값을 불러오지 못했습니다.',
+    );
   });
 
   it('should return class attendance list if repository returns data', async () => {
