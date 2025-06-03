@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import StudentRecordService from '../../src/services/student-record.service.js';
 import { ATTENDANCE_TYPE } from '../../src/constants/enum.constant.js';
-console.log('ATTENDANCE_TYPE in test:', ATTENDANCE_TYPE);
 
 describe('StudentRecordService - getStudentAttendance()', () => {
   let service;

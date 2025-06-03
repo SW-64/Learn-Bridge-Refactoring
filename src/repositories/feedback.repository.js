@@ -40,7 +40,6 @@ class FeedbackRepository {
           }),
         ),
       );
-      console.log(results);
       //  하나라도 수정되지 않았다면 트랜잭션 전체 취소
       const failed = results.find((res) => res.count === 0);
       if (failed) {

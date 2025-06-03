@@ -53,7 +53,6 @@ class StudentsRepository {
 
   //특정 학생 상세 조회
   getOneStudent = async (studentId) => {
-    console.log(studentId);
     const student = await prisma.student.findUnique({
       where: {
         studentId: studentId,

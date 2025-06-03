@@ -48,7 +48,6 @@ class StudentRecordService {
   createStudentAttendance = async (studentId, semester, attendance) => {
     const validAttendanceType = Object.values(ATTENDANCE_TYPE);
     for (const item of attendance) {
-      console.log(item);
       if (
         !item.date ||
         !item.reason ||
