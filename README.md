@@ -61,6 +61,8 @@ Jira를 통해 우선순위 작업 목록을 관리하며 팀원들과 협업 �
 - CICD 적용
 - TEST CODE
 
+---
+
 
 ## 주요 기능 및 설명
 
@@ -116,6 +118,11 @@ sendEmail(
       console.error('이메일 전송 실패:', err);
     });
 ```
+
+---
+
+
+
 ### 2. 에러 로그 모니터링 구현
 
 #### 구현 이유 
@@ -144,8 +151,10 @@ app.use(async (err, req, res, next) => {
   await sendSlackErrorAlert(err, req);
 ```
 
+---
 
-## Vitest 테스트 코드 작성
+
+### 3. Vitest 테스트 코드 작성
 
 ### Vitest를 선택한 이유
 
@@ -161,14 +170,16 @@ app.use(async (err, req, res, next) => {
 <br/>
 <br/>
 <img width="489" height="256" alt="Image" src="https://github.com/user-attachments/assets/f65723bb-5bce-4b8a-a3ab-264403c536a3" />
-출처 : https://vitest.dev/advanced/api/vitest.html
+
+<br/>출처 : https://vitest.dev/advanced/api/vitest.html
 
 다음 사진에 나와있듯이,
 
 평균적으로 94%의 커버리지를 확인할 수 있다.
 
+---
 
-## 성적/상담 수정 시, 동시성 문제를 고려한 낙관적 락 도입
+### 4. 성적/상담 수정 시, 동시성 문제를 고려한 낙관적 락 도입
 
 ### 왜 낙관적 락을 사용했는가?
 
@@ -230,7 +241,7 @@ app.use(async (err, req, res, next) => {
 <br/> 적용 위치 : updateGrades 레포지토리 메서드 내 grade 레코드 업데이트 시점
 <br/> 적용 이유 : 한 학생의 여러 과목 점수를 동시에 업데이트할 때 일부만 성공하고 일부만 실패하는 상황 방지
 
-
+---
 
 ## 트러블 슈팅
 <img width="1214" height="695" alt="Image" src="https://github.com/user-attachments/assets/e733c29c-d1fa-4586-98a8-263b7c927d7f" />
