@@ -168,6 +168,68 @@ app.use(async (err, req, res, next) => {
 평균적으로 94%의 커버리지를 확인할 수 있다.
 
 
+## 성적/상담 수정 시, 동시성 문제를 고려한 낙관적 락 도입
+
+### 왜 낙관적 락을 사용했는가?
+
+<br/>우리 시스템은 한 선생님이 여러 학생을 관리하는 구조다.
+<br/>한 학생의 데이터를 동시에 여러 선생님이 수정하는 일은 거의 없다고 판단.
+<br/>(담임 선생님이라는 구조상, 한 학생은 한 사람만 관리)
+<br/>
+<br/>그래서 **한 선생님이 여러 탭에서 동시에 데이터를 수정할 때** 발생하는 동시성 문제를 중점적으로 생각했다.
+<br/> ( 사람들은 보통 여러 탭에서 작업을 한다고 생각했기 때문이다... )
+<br/>
+<br/> 이 경우만 충돌을 감지하면 충분하다고 판단하여, 성능 부담이 큰 비관적 락 대신 낙관적 락을 선택
+
+
+<br/>
+
+### 어떻게 적용시켰는지?
+
+```
+// 성적 수정
+  updateGrades = async (gradesWithStudentId, studentUserId) => {
+    await prisma.$transaction(async (tx) => {
+      const results = await Promise.all(
+        gradesWithStudentId.map((grade) =>
+          tx.grade.updateMany({
+            where: {
+              studentId: grade.studentId,
+              schoolYear: grade.schoolYear,
+              semester: grade.semester,
+              subject: grade.subject,
+              updatedAt: grade.updatedAt, // 낙관적 락용
+            },
+            data: {
+              scoreIv: grade.scoreIv,
+              scoreContent: grade.scoreContent,
+              updatedAt: new Date(),
+            },
+          }),
+        ),
+      );
+
+      //  하나라도 수정되지 않았다면 트랜잭션 전체 취소
+      const failed = results.find((res) => res.count === 0);
+      if (failed) {
+        throw new BadRequestError('다른 탭 혹은 창에서 이미 수정되었습니다.');
+      }
+    });
+```
+
+조회 시점의 updatedAt과 DB의 실제 updatedAt이 다르면 충돌로 간주
+<br/>충돌 발생 시 사용자에게 알림 제공 후 재시도를 유도
+
+트랜잭션은 Prisma의 $transaction 메서드에 async 콜백을 전달하여 구현
+<br/>콜백 내 tx 객체로 여러 updateMany 쿼리 실행
+<br/>하나라도 실패하면 전체 롤백 → 데이터 일관성 보장
+
+
+
+
+<br/> 적용 위치 : updateGrades 레포지토리 메서드 내 grade 레코드 업데이트 시점
+<br/> 적용 이유 : 한 학생의 여러 과목 점수를 동시에 업데이트할 때 일부만 성공하고 일부만 실패하는 상황 방지
+
 
 
 ## 트러블 슈팅
