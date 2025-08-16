@@ -145,6 +145,28 @@ app.use(async (err, req, res, next) => {
 ```
 
 
+## Vitest 테스트 코드 작성
+
+### Vitest를 선택한 이유
+
+<br/>이 프로젝트의 백엔드 기술스택은 Nodejs를 ESM 방식으로 사용하고 있다.
+<br/>Node.js 환경에서 테스트 코드를 작성할 때 Jest를 선택할 수도 있었으나,
+<br/>Jest는 ESM 지원이 제한적이고, 관련 문서가 대부분 CJS 중심이라 불편함이 있었다.
+<br/>이를 해결하기 위해 Vitest를 도입했다.
+<br/>Vitest는 Jest와 방식은 거의 동일하면서 속도도 Jest보다 빠르다.
+<br/>또한 ESM을 지원하는 공식문서가 충분히 제공되어 사용하는데 편리했다.
+<br/>
+<br/>
+### Vitest를 사용한 결과
+<br/>
+<br/>
+<img width="489" height="256" alt="Image" src="https://github.com/user-attachments/assets/f65723bb-5bce-4b8a-a3ab-264403c536a3" />
+출처 : https://vitest.dev/advanced/api/vitest.html
+
+다음 사진에 나와있듯이,
+
+평균적으로 94%의 커버리지를 확인할 수 있다.
+
 
 
 
